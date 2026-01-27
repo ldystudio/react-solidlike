@@ -98,7 +98,7 @@ describe("Show 组件", () => {
             expect(html).toContain("content");
         });
 
-        test("condition 为对象时渲染", () => {
+        test("condition 为非空对象时渲染", () => {
             const html = renderToString(
                 <Show when={{ name: "test" }}>
                     <span>content</span>
@@ -107,7 +107,7 @@ describe("Show 组件", () => {
             expect(html).toContain("content");
         });
 
-        test("condition 为数组时渲染", () => {
+        test("condition 为非空数组时渲染", () => {
             const html = renderToString(
                 <Show when={[1, 2, 3]}>
                     <span>content</span>
@@ -116,22 +116,80 @@ describe("Show 组件", () => {
             expect(html).toContain("content");
         });
 
-        test("condition 为空数组时渲染（空数组是 truthy）", () => {
+        test("condition 为非空 Map 时渲染", () => {
             const html = renderToString(
-                <Show when={[]}>
+                <Show when={new Map([["key", "value"]])}>
                     <span>content</span>
                 </Show>
             );
             expect(html).toContain("content");
         });
 
-        test("condition 为空对象时渲染（空对象是 truthy）", () => {
+        test("condition 为非空 Set 时渲染", () => {
+            const html = renderToString(
+                <Show when={new Set([1, 2])}>
+                    <span>content</span>
+                </Show>
+            );
+            expect(html).toContain("content");
+        });
+    });
+
+    describe("复杂类型判空", () => {
+        test("condition 为空数组时不渲染", () => {
+            const html = renderToString(
+                <Show when={[]}>
+                    <span>content</span>
+                </Show>
+            );
+            expect(html).toBe("");
+        });
+
+        test("condition 为空对象时不渲染", () => {
             const html = renderToString(
                 <Show when={{}}>
                     <span>content</span>
                 </Show>
             );
-            expect(html).toContain("content");
+            expect(html).toBe("");
+        });
+
+        test("condition 为空 Map 时不渲染", () => {
+            const html = renderToString(
+                <Show when={new Map()}>
+                    <span>content</span>
+                </Show>
+            );
+            expect(html).toBe("");
+        });
+
+        test("condition 为空 Set 时不渲染", () => {
+            const html = renderToString(
+                <Show when={new Set()}>
+                    <span>content</span>
+                </Show>
+            );
+            expect(html).toBe("");
+        });
+
+        test("空数组时渲染 fallback", () => {
+            const html = renderToString(
+                <Show when={[]} fallback={<span>empty</span>}>
+                    <span>content</span>
+                </Show>
+            );
+            expect(html).toContain("empty");
+            expect(html).not.toContain("content");
+        });
+
+        test("空对象时渲染 fallback", () => {
+            const html = renderToString(
+                <Show when={{}} fallback={<span>empty</span>}>
+                    <span>content</span>
+                </Show>
+            );
+            expect(html).toContain("empty");
+            expect(html).not.toContain("content");
         });
     });
 
