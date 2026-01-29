@@ -300,4 +300,84 @@ describe("For 组件", () => {
             expect(html).toContain("item-999");
         });
     });
+
+    describe("wrapper 功能", () => {
+        test("使用 wrapper 包装所有元素", () => {
+            const items = ["a", "b", "c"];
+            const html = renderToString(
+                <For each={items} wrapper={<ul className="list" />}>
+                    {(item) => <li>{item}</li>}
+                </For>
+            );
+            expect(html).toContain('<ul class="list">');
+            expect(html).toContain("</ul>");
+            expect(html).toContain("<li>a</li>");
+            expect(html).toContain("<li>b</li>");
+            expect(html).toContain("<li>c</li>");
+        });
+
+        test("wrapper 可以是带属性的元素", () => {
+            const items = [1, 2, 3];
+            const html = renderToString(
+                <For each={items} wrapper={<div id="container" data-testid="wrapper" />}>
+                    {(num) => <span>{num}</span>}
+                </For>
+            );
+            expect(html).toContain('id="container"');
+            expect(html).toContain('data-testid="wrapper"');
+        });
+
+        test("未提供 wrapper 时直接返回元素数组", () => {
+            const items = ["x", "y"];
+            const html = renderToString(<For each={items}>{(item) => <span>{item}</span>}</For>);
+            // 没有额外的包装元素
+            expect(html).toBe("<span>x</span><span>y</span>");
+        });
+
+        test("空数组时 wrapper 不渲染，显示 fallback", () => {
+            const html = renderToString(
+                <For each={[] as string[]} wrapper={<ul />} fallback={<div>Empty</div>}>
+                    {(item) => <li>{item}</li>}
+                </For>
+            );
+            expect(html).toContain("Empty");
+            expect(html).not.toContain("<ul>");
+        });
+
+        test("wrapper 与 keyExtractor 配合使用", () => {
+            const users = [
+                { id: "u1", name: "Alice" },
+                { id: "u2", name: "Bob" },
+            ];
+            const html = renderToString(
+                <For each={users} keyExtractor={(u) => u.id} wrapper={<section className="users" />}>
+                    {(user) => <div>{user.name}</div>}
+                </For>
+            );
+            expect(html).toContain('<section class="users">');
+            expect(html).toContain("Alice");
+            expect(html).toContain("Bob");
+        });
+
+        test("嵌套 For 各自独立的 wrapper", () => {
+            const data = [
+                { group: "A", items: [1, 2] },
+                { group: "B", items: [3, 4] },
+            ];
+            const html = renderToString(
+                <For each={data} wrapper={<div className="outer" />}>
+                    {(group) => (
+                        <div>
+                            {group.group}:
+                            <For each={group.items} wrapper={<span className="inner" />}>
+                                {(item) => <em>{item}</em>}
+                            </For>
+                        </div>
+                    )}
+                </For>
+            );
+            expect(html).toContain('class="outer"');
+            expect(html).toContain('class="inner"');
+        });
+    });
 });

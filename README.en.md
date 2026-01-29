@@ -58,6 +58,11 @@ import { For } from "react-solidlike";
 <For each={items} fallback={<EmptyState />}>
   {(item, index) => <ListItem item={item} index={index} />}
 </For>
+
+// With wrapper element
+<For each={items} wrapper={<ul className="list" />}>
+  {(item) => <li>{item.name}</li>}
+</For>
 ```
 
 ### `<Switch>` / `<Match>` / `<Default>` - Multi-branch Rendering
@@ -125,6 +130,11 @@ import { Repeat } from "react-solidlike";
 // Generate skeleton placeholders
 <Repeat times={3}>
   {(i) => <SkeletonCard key={i} />}
+</Repeat>
+
+// With wrapper element
+<Repeat times={5} wrapper={<div className="stars" />}>
+  {(i) => <Star key={i} />}
 </Repeat>
 ```
 

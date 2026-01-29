@@ -131,4 +131,85 @@ describe("Repeat 组件", () => {
             expect(skeletons?.length).toBe(3);
         });
     });
+
+    describe("wrapper 功能", () => {
+        test("使用 wrapper 包装所有元素", () => {
+            const html = renderToString(
+                <Repeat times={3} wrapper={<div className="stars" />}>
+                    {(i) => <span key={i}>★</span>}
+                </Repeat>
+            );
+            expect(html).toContain('<div class="stars">');
+            expect(html).toContain("</div>");
+            const stars = html.match(/★/g);
+            expect(stars?.length).toBe(3);
+        });
+
+        test("wrapper 可以是带属性的元素", () => {
+            const html = renderToString(
+                <Repeat times={2} wrapper={<ul id="list" data-testid="repeat-wrapper" />}>
+                    {(i) => <li key={i}>Item {i}</li>}
+                </Repeat>
+            );
+            expect(html).toContain('id="list"');
+            expect(html).toContain('data-testid="repeat-wrapper"');
+            expect(html).toContain("<li>");
+        });
+
+        test("未提供 wrapper 时直接返回元素数组", () => {
+            const html = renderToString(<Repeat times={2}>{(i) => <span key={i}>{i}</span>}</Repeat>);
+            // 没有额外的包装元素
+            expect(html).toBe("<span>0</span><span>1</span>");
+        });
+
+        test("times 为 0 时 wrapper 不渲染", () => {
+            const html = renderToString(
+                <Repeat times={0} wrapper={<div className="empty" />}>
+                    {(i) => <span key={i}>{i}</span>}
+                </Repeat>
+            );
+            expect(html).toBe("");
+            expect(html).not.toContain("empty");
+        });
+
+        test("times 为负数时 wrapper 不渲染", () => {
+            const html = renderToString(
+                <Repeat times={-3} wrapper={<div className="negative" />}>
+                    {(i) => <span key={i}>{i}</span>}
+                </Repeat>
+            );
+            expect(html).toBe("");
+        });
+
+        test("wrapper 用于星级评分容器", () => {
+            const rating = 3;
+            const html = renderToString(
+                <Repeat times={5} wrapper={<div className="rating" />}>
+                    {(i) => <span key={i}>{i < rating ? "★" : "☆"}</span>}
+                </Repeat>
+            );
+            expect(html).toContain('class="rating"');
+            const filled = html.match(/★/g);
+            const empty = html.match(/☆/g);
+            expect(filled?.length).toBe(3);
+            expect(empty?.length).toBe(2);
+        });
+
+        test("嵌套 Repeat 各自独立的 wrapper", () => {
+            const html = renderToString(
+                <Repeat times={2} wrapper={<div className="outer" />}>
+                    {(i) => (
+                        <div key={i}>
+                            Row {i}:
+                            <Repeat times={3} wrapper={<span className="inner" />}>
+                                {(j) => <em key={j}>{j}</em>}
+                            </Repeat>
+                        </div>
+                    )}
+                </Repeat>
+            );
+            expect(html).toContain('class="outer"');
+            expect(html).toContain('class="inner"');
+        });
+    });
 });

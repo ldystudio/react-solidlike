@@ -1,10 +1,12 @@
-import { Fragment, type ReactNode } from "react";
+import { cloneElement, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
 
 export interface RepeatProps {
     /** Number of times to repeat | 重复次数 */
     times: number;
     /** Render function, receives current index (starting from 0) | 渲染函数，接收当前索引（从 0 开始） */
     children: (index: number) => ReactNode;
+    /** Wrapper element for all rendered elements | 包装所有渲染元素的元素 */
+    wrapper?: ReactElement;
 }
 
 /**
@@ -29,8 +31,14 @@ export interface RepeatProps {
  * <Repeat times={rating}>
  *   {(i) => <FilledStar key={i} />}
  * </Repeat>
+ *
+ * @example
+ * // With wrapper element | 使用包装元素
+ * <Repeat times={5} wrapper={<div className="stars" />}>
+ *   {(i) => <Star key={i} />}
+ * </Repeat>
  */
-export function Repeat({ times, children }: RepeatProps): ReactNode {
+export function Repeat({ times, children, wrapper }: RepeatProps): ReactNode {
     if (times <= 0) {
         return null;
     }
@@ -40,5 +48,5 @@ export function Repeat({ times, children }: RepeatProps): ReactNode {
         elements.push(<Fragment key={i}>{children(i)}</Fragment>);
     }
 
-    return elements;
+    return wrapper && isValidElement(wrapper) ? cloneElement(wrapper, {}, elements) : elements;
 }

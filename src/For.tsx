@@ -1,4 +1,4 @@
-import { Fragment, type Key, type ReactNode } from "react";
+import { cloneElement, Fragment, isValidElement, type Key, type ReactElement, type ReactNode } from "react";
 
 export interface ForProps<T> {
     /** Array to iterate over | 要遍历的数组 */
@@ -9,6 +9,8 @@ export interface ForProps<T> {
     keyExtractor?: (item: T, index: number) => Key;
     /** Fallback content when array is empty | 数组为空时渲染的备选内容 */
     fallback?: ReactNode;
+    /** Wrapper element for all rendered elements | 包装所有渲染元素的元素 */
+    wrapper?: ReactElement;
 }
 
 /**
@@ -33,14 +35,22 @@ export interface ForProps<T> {
  * <For each={items} fallback={<EmptyState />}>
  *   {(item, index) => <ListItem key={item.id} item={item} index={index} />}
  * </For>
+ *
+ * @example
+ * // With wrapper element | 使用包装元素
+ * <For each={items} wrapper={<ul className="list" />}>
+ *   {(item) => <li>{item.name}</li>}
+ * </For>
  */
-export function For<T>({ each, children, keyExtractor, fallback = null }: ForProps<T>): ReactNode {
+export function For<T>({ each, children, keyExtractor, fallback = null, wrapper }: ForProps<T>): ReactNode {
     if (!each || each.length === 0) {
         return fallback;
     }
 
-    return each.map((item, index) => {
+    const elements = each.map((item, index) => {
         const key = keyExtractor ? keyExtractor(item, index) : index;
         return <Fragment key={key}>{children(item, index)}</Fragment>;
     });
+
+    return wrapper && isValidElement(wrapper) ? cloneElement(wrapper, {}, elements) : elements;
 }

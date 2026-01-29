@@ -58,6 +58,11 @@ import { For } from "react-solidlike";
 <For each={items} fallback={<EmptyState />}>
   {(item, index) => <ListItem item={item} index={index} />}
 </For>
+
+// 使用 wrapper 包装元素
+<For each={items} wrapper={<ul className="list" />}>
+  {(item) => <li>{item.name}</li>}
+</For>
 ```
 
 ### `<Switch>` / `<Match>` / `<Default>` - 多分支渲染
@@ -125,6 +130,11 @@ import { Repeat } from "react-solidlike";
 // 生成骨架屏占位
 <Repeat times={3}>
   {(i) => <SkeletonCard key={i} />}
+</Repeat>
+
+// 使用 wrapper 包装元素
+<Repeat times={5} wrapper={<div className="stars" />}>
+  {(i) => <Star key={i} />}
 </Repeat>
 ```
 
