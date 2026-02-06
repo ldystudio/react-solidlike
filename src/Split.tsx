@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react';
-import { For, type ForProps } from './For';
+import type { ReactNode } from "react";
+import { For, type ForProps } from "./For";
 
-export interface SplitProps extends Omit<ForProps<string>, 'each'> {
+export interface SplitProps extends Omit<ForProps<string>, "each"> {
     /** String to split | 要切割的字符串 */
     string: string | null | undefined;
     /** Separator to split by, can be string or RegExp | 分隔符，可以是字符串或正则表达式 */
@@ -49,13 +49,7 @@ export interface SplitProps extends Omit<ForProps<string>, 'each'> {
  *   {(word) => <span>{word}</span>}
  * </Split>
  */
-export function Split({
-    string,
-    separator,
-    keepSeparator = false,
-    children,
-    ...props
-}: SplitProps): ReactNode {
+export function Split({ string, separator, keepSeparator = false, children, ...props }: SplitProps): ReactNode {
     const parts = splitString(string, separator, keepSeparator);
 
     return (
@@ -66,11 +60,7 @@ export function Split({
 }
 
 /** Split string by separator, optionally keeping separator in result | 按分隔符切割字符串，可选择保留分隔符 */
-function splitString(
-    string: string | null | undefined,
-    separator: string | RegExp,
-    keepSeparator: boolean
-): string[] {
+function splitString(string: string | null | undefined, separator: string | RegExp, keepSeparator: boolean): string[] {
     if (!string) {
         return [];
     }
@@ -81,10 +71,10 @@ function splitString(
             separator instanceof RegExp
                 ? new RegExp(
                       `(${separator.source})`,
-                      separator.flags.includes('g') ? separator.flags : `${separator.flags}g`
+                      separator.flags.includes("g") ? separator.flags : `${separator.flags}g`
                   )
-                : new RegExp(`(${escapeRegExp(separator)})`, 'g');
-        return string.split(regex).filter((part) => part !== '');
+                : new RegExp(`(${escapeRegExp(separator)})`, "g");
+        return string.split(regex).filter((part) => part !== "");
     }
 
     return string.split(separator);
@@ -92,5 +82,5 @@ function splitString(
 
 /** Escape special regex characters in a string | 转义字符串中的正则特殊字符 */
 function escapeRegExp(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

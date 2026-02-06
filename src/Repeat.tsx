@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react';
-import { For, type ForProps } from './For';
+import type { ReactNode } from "react";
+import { For, type ForProps } from "./For";
 
-export interface RepeatProps extends Omit<ForProps<number>, 'each'> {
+export interface RepeatProps extends Omit<ForProps<number>, "each"> {
     /** Number of times to repeat | 重复次数 */
     times: number;
 }

@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from "react";
 
 export interface ClientOnlyProps {
     /** Content to render only on client side | 仅在客户端渲染的内容 */
@@ -53,7 +53,7 @@ export function ClientOnly({ children, fallback = null }: ClientOnlyProps): Reac
         return fallback;
     }
 
-    if (typeof children === 'function') {
+    if (typeof children === "function") {
         return children();
     }
 

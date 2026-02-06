@@ -1,80 +1,80 @@
 # react-solidlike
 
-[English](./README.en.md) | 中文
+English | [中文](./README.zh.md)
 
-声明式 React 控制流组件库，灵感来源于 Solid.js。用于替代 JSX 中的三元表达式和 `array.map()`，让你的组件代码更加清晰易读。支持 React 和 React Native。
+Declarative React control flow components inspired by Solid.js. Replaces ternary expressions and `array.map()` in JSX, making your component code cleaner and more readable. Supports React and React Native.
 
-## 安装
+## Installation
 
 ```bash
 npm install react-solidlike
-# 或
+# or
 bun add react-solidlike
 ```
 
-## 组件
+## Components
 
-### `<Show>` - 条件渲染
+### `<Show>` - Conditional Rendering
 
-替代三元表达式进行条件渲染。
+Replace ternary expressions for conditional rendering.
 
 ```tsx
 import { Show } from "react-solidlike";
 
-// 基础用法
+// Basic usage
 <Show when={isLoggedIn}>
   <UserProfile />
 </Show>
 
-// 带 fallback
+// With fallback
 <Show when={isLoggedIn} fallback={<LoginButton />}>
   <UserProfile />
 </Show>
 
-// 使用 render props 获取类型安全的值
+// Using render props for type-safe value access
 <Show when={user}>
   {(user) => <UserProfile name={user.name} />}
 </Show>
 
-// 带 onFallback 回调（用于重定向等副作用）
+// With onFallback callback (for redirects and other side effects)
 <Show when={isAuthenticated} fallback={<Loading />} onFallback={() => navigate('/login')}>
   <Dashboard />
 </Show>
 ```
 
-### `<For>` - 列表渲染
+### `<For>` - List Rendering
 
-替代 `array.map()` 进行列表渲染。
+Replace `array.map()` for list rendering.
 
 ```tsx
 import { For } from "react-solidlike";
 
-// 基础用法
+// Basic usage
 <For each={items}>
   {(item) => <ListItem {...item} />}
 </For>
 
-// 带 keyExtractor
+// With keyExtractor
 <For each={users} keyExtractor={(user) => user.id}>
   {(user) => <UserCard user={user} />}
 </For>
 
-// 带 fallback 处理空数组
+// With fallback for empty arrays
 <For each={items} fallback={<EmptyState />}>
   {(item, index) => <ListItem item={item} index={index} />}
 </For>
 
-// 使用 wrapper 包装元素
+// With wrapper element
 <For each={items} wrapper={<ul className="list" />}>
   {(item) => <li>{item.name}</li>}
 </For>
 
-// 倒序渲染
+// Reverse rendering
 <For each={messages} reverse>
   {(msg) => <Message {...msg} />}
 </For>
 
-// 使用 array 参数获取上下文信息
+// Using array parameter for context
 <For each={steps}>
   {(step, index, array) => (
     <Step
@@ -86,9 +86,9 @@ import { For } from "react-solidlike";
 </For>
 ```
 
-### `<Switch>` / `<Match>` / `<Default>` - 多分支渲染
+### `<Switch>` / `<Match>` / `<Default>` - Multi-branch Rendering
 
-替代多个 `if-else` 或 `switch` 语句。
+Replace multiple `if-else` or `switch` statements.
 
 ```tsx
 import { Switch, Match, Default } from "react-solidlike";
@@ -109,19 +109,19 @@ import { Switch, Match, Default } from "react-solidlike";
 </Switch>
 ```
 
-### `<Await>` - 异步等待
+### `<Await>` - Async Rendering
 
-等待 Promise resolve 后渲染内容。
+Wait for Promise to resolve before rendering.
 
 ```tsx
 import { Await } from "react-solidlike";
 
-// 基础用法
+// Basic usage
 <Await promise={fetchUser()} loading={<Spinner />}>
   {(user) => <UserProfile user={user} />}
 </Await>
 
-// 带错误处理
+// With error handling
 <Await
   promise={fetchData()}
   loading={<Loading />}
@@ -130,40 +130,40 @@ import { Await } from "react-solidlike";
   {(data) => <DataView data={data} />}
 </Await>
 
-// 支持非 Promise 值（用于缓存场景）
+// Supports non-Promise values (for caching scenarios)
 <Await promise={cache ?? fetchData()} loading={<Spinner />}>
   {(data) => <DataView data={data} />}
 </Await>
 ```
 
-### `<Repeat>` - 重复渲染
+### `<Repeat>` - Repeat Rendering
 
-替代 `Array.from({ length: n }).map()`。
+Replace `Array.from({ length: n }).map()`.
 
 ```tsx
 import { Repeat } from "react-solidlike";
 
-// 渲染星级评分
+// Render star ratings
 <Repeat times={5}>
   {(i) => <Star key={i} filled={i < rating} />}
 </Repeat>
 
-// 生成骨架屏占位
+// Generate skeleton placeholders
 <Repeat times={3}>
   {(i) => <SkeletonCard key={i} />}
 </Repeat>
 
-// 使用 wrapper 包装元素
+// With wrapper element
 <Repeat times={5} wrapper={<div className="stars" />}>
   {(i) => <Star key={i} />}
 </Repeat>
 
-// 倒序渲染
+// Reverse rendering
 <Repeat times={5} reverse>
-  {(i) => <div key={i}>倒序 {i}</div>}
+  {(i) => <div key={i}>Reversed {i}</div>}
 </Repeat>
 
-// 使用 length 参数显示进度
+// Using length parameter for progress
 <Repeat times={totalSteps}>
   {(i, length) => (
     <Step key={i} current={i + 1} total={length} />
@@ -171,56 +171,56 @@ import { Repeat } from "react-solidlike";
 </Repeat>
 ```
 
-### `<Split>` - 字符串切割渲染
+### `<Split>` - String Split Rendering
 
-按分隔符切割字符串并渲染每个部分。
+Split a string by separator and render each part.
 
 ```tsx
 import { Split } from "react-solidlike";
 
-// 基础用法 - 切割后不保留分隔符
+// Basic usage - splits without keeping separator
 <Split string="a,b,c" separator=",">
   {(part) => <span>{part}</span>}
 </Split>
-// 渲染: ["a", "b", "c"]
+// Renders: ["a", "b", "c"]
 
-// 保留分隔符
+// Keep separator in result
 <Split string="9+5=(9+1)+4" separator="=" keepSeparator>
   {(part) => <span>{part}</span>}
 </Split>
-// 渲染: ["9+5", "=", "(9+1)+4"]
+// Renders: ["9+5", "=", "(9+1)+4"]
 
-// 使用正则表达式分隔符
+// Using RegExp separator
 <Split string="a1b2c3" separator={/\d/} keepSeparator>
   {(part) => <span>{part}</span>}
 </Split>
-// 渲染: ["a", "1", "b", "2", "c", "3"]
+// Renders: ["a", "1", "b", "2", "c", "3"]
 
-// 带 wrapper 包装元素
+// With wrapper element
 <Split string="hello world" separator=" " wrapper={<div className="words" />}>
   {(word) => <span>{word}</span>}
 </Split>
 
-// 带 fallback 处理空字符串
+// With fallback for empty string
 <Split string={text} separator="," fallback={<EmptyState />}>
   {(part) => <Tag>{part}</Tag>}
 </Split>
 
-// 倒序渲染
+// Reverse rendering
 <Split string="a,b,c" separator="," reverse>
   {(part) => <span>{part}</span>}
 </Split>
-// 渲染顺序: ["c", "b", "a"]
+// Render order: ["c", "b", "a"]
 ```
 
-### `<Dynamic>` - 动态组件
+### `<Dynamic>` - Dynamic Component
 
-根据条件动态选择要渲染的组件类型。
+Dynamically select component type based on conditions.
 
 ```tsx
 import { Dynamic } from "react-solidlike";
 
-// 动态选择按钮或链接
+// Dynamic button or link
 <Dynamic
   component={href ? 'a' : 'button'}
   href={href}
@@ -229,13 +229,13 @@ import { Dynamic } from "react-solidlike";
   {label}
 </Dynamic>
 
-// 配合自定义组件
+// With custom components
 <Dynamic
   component={isAdmin ? AdminPanel : UserPanel}
   user={currentUser}
 />
 
-// React Native 中使用
+// React Native usage
 <Dynamic
   component={isPressable ? Pressable : View}
   onPress={handlePress}
@@ -244,19 +244,19 @@ import { Dynamic } from "react-solidlike";
 </Dynamic>
 ```
 
-### `<ErrorBoundary>` - 错误边界
+### `<ErrorBoundary>` - Error Boundary
 
-捕获子组件树中的 JavaScript 错误，防止整个应用崩溃。
+Catch JavaScript errors in child component tree.
 
 ```tsx
 import { ErrorBoundary } from "react-solidlike";
 
-// 基础用法
+// Basic usage
 <ErrorBoundary fallback={<ErrorPage />}>
   <App />
 </ErrorBoundary>
 
-// 使用 render props 获取错误信息和重置函数
+// With render props for error info and reset function
 <ErrorBoundary
   fallback={(error, reset) => (
     <div>
@@ -268,15 +268,15 @@ import { ErrorBoundary } from "react-solidlike";
   <App />
 </ErrorBoundary>
 
-// resetKey 变化时自动重置
+// Auto-reset when resetKey changes
 <ErrorBoundary fallback={<Error />} resetKey={userId}>
   <UserProfile />
 </ErrorBoundary>
 ```
 
-### `<QueryBoundary>` - 查询边界
+### `<QueryBoundary>` - Query Boundary
 
-处理异步查询的各种状态（加载中、错误、空数据、成功）。可与 `@tanstack/react-query`、SWR、RTK Query 等配合使用。
+Handle async query states (loading, error, empty, success). Works with `@tanstack/react-query`, SWR, RTK Query, etc.
 
 ```tsx
 import { QueryBoundary } from "react-solidlike";
@@ -306,28 +306,28 @@ function UserList() {
 
 #### Props
 
-| 属性 | 类型 | 描述 |
-|------|------|------|
-| `query` | `QueryResult<T>` | 查询结果对象 |
-| `loading` | `ReactNode` | 加载中显示 |
-| `error` | `ReactNode` | 错误时显示 |
-| `empty` | `ReactNode` | 空数据显示 |
-| `children` | `ReactNode \| (data: T) => ReactNode` | 成功时渲染 |
-| `isEmptyFn` | `(data: T) => boolean` | 自定义空判断 |
+| Prop        | Type                                  | Description           |
+| ----------- | ------------------------------------- | --------------------- |
+| `query`     | `QueryResult<T>`                      | Query result object   |
+| `loading`   | `ReactNode`                           | Loading state content |
+| `error`     | `ReactNode`                           | Error state content   |
+| `empty`     | `ReactNode`                           | Empty state content   |
+| `children`  | `ReactNode \| (data: T) => ReactNode` | Success content       |
+| `isEmptyFn` | `(data: T) => boolean`                | Custom empty check    |
 
-### `<Once>` - 单次渲染
+### `<Once>` - Single Render
 
-只渲染一次子元素，忽略后续更新。适用于昂贵的计算或不应重新渲染的内容。
+Renders children only once and ignores subsequent updates. Useful for expensive computations or content that shouldn't re-render.
 
 ```tsx
 import { Once } from "react-solidlike";
 
-// 渲染昂贵的组件
+// Render expensive component once
 <Once>
   <ExpensiveChart data={data} />
 </Once>
 
-// 防止父组件更新导致的重新渲染
+// Prevent re-renders from parent updates
 function Parent() {
   const [count, setCount] = useState(0);
   return (
@@ -341,75 +341,113 @@ function Parent() {
 }
 ```
 
-### `<ClientOnly>` - 仅客户端渲染
+### `<ClientOnly>` - Client-side Only Rendering
 
-仅在客户端（hydration 之后）渲染子元素。适用于依赖浏览器 API 或需要避免 SSR hydration 不匹配的场景。
+Renders children only on the client side (after hydration). Useful for components that rely on browser APIs or need to avoid SSR hydration mismatches.
 
 ```tsx
 import { ClientOnly } from "react-solidlike";
 
-// 基础用法
+// Basic usage
 <ClientOnly>
   <BrowserOnlyComponent />
 </ClientOnly>
 
-// 带 SSR 备选内容
+// With SSR fallback
 <ClientOnly fallback={<Skeleton />}>
   <DynamicChart />
 </ClientOnly>
 
-// 使用渲染函数延迟求值（避免访问 window）
+// Using render function for lazy evaluation (avoid accessing window)
 <ClientOnly fallback={<Loading />}>
   {() => <ComponentUsingWindow width={window.innerWidth} />}
 </ClientOnly>
 
-// 避免 hydration 不匹配
+// Avoid hydration mismatch
 <ClientOnly fallback={<span>--:--</span>}>
   <CurrentTime />
 </ClientOnly>
 ```
 
-### `<Visible>` - 可见性渲染（仅 Web）
+### `<Timeout>` - Timeout Rendering
 
-基于 IntersectionObserver 的可见性渲染，进入视口才渲染。在 React Native 或不支持的环境中会直接渲染 children（优雅降级）。
+Shows or hides content after a specified delay. Useful for auto-dismissing notifications, delayed loading scenarios.
+
+```tsx
+import { Timeout } from "react-solidlike";
+
+// Show after delay (mode="after", default)
+<Timeout ms={1000} mode="after" fallback={<Spinner />}>
+  <DelayedContent />
+</Timeout>
+
+// Hide after delay (mode="before")
+<Timeout ms={3000} mode="before">
+  <Toast message="Success!" />
+</Timeout>
+
+// Auto-dismiss notification
+<Timeout ms={5000} mode="before" onTimeout={() => console.log("dismissed")}>
+  <Notification type="success">Saved successfully</Notification>
+</Timeout>
+
+// Delayed render with loading state
+<Timeout ms={2000} mode="after" fallback={<Skeleton />}>
+  <ExpensiveComponent />
+</Timeout>
+```
+
+#### Props
+
+| Prop        | Type                  | Description                                                                     |
+| ----------- | --------------------- | ------------------------------------------------------------------------------- |
+| `ms`        | `number`              | Delay time in milliseconds                                                      |
+| `mode`      | `'after' \| 'before'` | `'after'` = show after delay, `'before'` = hide after delay (default `'after'`) |
+| `children`  | `ReactNode`           | Content to render                                                               |
+| `fallback`  | `ReactNode`           | Content to show while waiting (`after` mode only)                               |
+| `onTimeout` | `() => void`          | Callback when timeout occurs                                                    |
+
+### `<Visible>` - Visibility-based Rendering (Web only)
+
+Renders children when entering viewport using IntersectionObserver. In React Native or unsupported environments, children are rendered directly (graceful degradation).
 
 ```tsx
 import { Visible } from "react-solidlike";
 
-// 基础用法 - 进入视口时渲染
+// Basic usage - render when entering viewport
 <Visible>
   <HeavyComponent />
 </Visible>
 
-// 带占位符
+// With placeholder
 <Visible fallback={<Skeleton />}>
   <Image src={url} />
 </Visible>
 
-// 提前预加载（rootMargin）
+// Preload before entering viewport (rootMargin)
 <Visible rootMargin="200px" fallback={<Placeholder />}>
   <LazyImage />
 </Visible>
 
-// 切换可见性（once=false 时离开视口会卸载）
+// Toggle visibility (once=false unmounts when leaving viewport)
 <Visible once={false} onVisibilityChange={(v) => console.log(v)}>
   <VideoPlayer />
 </Visible>
 ```
 
-## 开发
+## Development
 
 ```bash
-# 安装依赖
+# Install dependencies
 bun install
 
-# 运行测试
+# Run tests
 bun test
 
-# 代码检查
+# Lint
 bun run lint
 
-# 构建
+# Build
 bun run build
 ```
 

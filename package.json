@@ -1,6 +1,6 @@
 {
     "name": "react-solidlike",
-    "version": "2.4.0",
+    "version": "2.5.0",
     "description": "Declarative React control flow components inspired by Solid.js, replacing ternary expressions and array.map() in JSX",
     "type": "module",
     "main": "./dist/index.js",
@@ -18,11 +18,12 @@
     "scripts": {
         "build": "rm -rf dist && rolldown -c && tsc -p tsconfig.build.json",
         "test": "bun test",
-        "test:e2e": "playwright test",
+        "test:e2e": "playwright test && playwright show-report",
+        "pretest:e2e": "bun e2e/check-browsers.ts",
         "lint": "biome check .",
         "lint:fix": "biome check --write .",
         "format": "biome format --write .",
-        "prepublishOnly": "bun test && bun run build"
+        "prepublishOnly": "bun format && bun test && bun run build"
     },
     "keywords": [
         "react",
