@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import type { ReactElement } from "react";
 import { renderToString } from "react-dom/server";
 import { For } from "./For";
 
@@ -468,6 +469,55 @@ describe("For 组件", () => {
                 </For>
             );
             expect(original).toEqual(copy);
+        });
+    });
+
+    describe("children 自带 key 的提升", () => {
+        test("未提供 keyExtractor 时，提升 children 返回元素的 key 到 Fragment", () => {
+            const items = [
+                { id: "x1", name: "Alice" },
+                { id: "x2", name: "Bob" },
+            ];
+            const elements = For({
+                each: items,
+                children: (item) => <div key={item.id}>{item.name}</div>,
+            }) as ReactElement[];
+            expect(elements[0].key).toBe("x1");
+            expect(elements[1].key).toBe("x2");
+        });
+
+        test("keyExtractor 优先于 children 自带的 key", () => {
+            const items = [
+                { id: "a", name: "Alice" },
+                { id: "b", name: "Bob" },
+            ];
+            const elements = For({
+                each: items,
+                keyExtractor: (item) => `ext-${item.id}`,
+                children: (item) => <div key={item.id}>{item.name}</div>,
+            }) as ReactElement[];
+            expect(elements[0].key).toBe("ext-a");
+            expect(elements[1].key).toBe("ext-b");
+        });
+
+        test("children 返回非 ReactElement 时回退到 index", () => {
+            const items = ["hello", "world"];
+            const elements = For({
+                each: items,
+                children: (item) => item,
+            }) as ReactElement[];
+            expect(elements[0].key).toBe("0");
+            expect(elements[1].key).toBe("1");
+        });
+
+        test("children 返回无 key 元素时回退到 index", () => {
+            const items = ["a", "b"];
+            const elements = For({
+                each: items,
+                children: (item) => <span>{item}</span>,
+            }) as ReactElement[];
+            expect(elements[0].key).toBe("0");
+            expect(elements[1].key).toBe("1");
         });
     });
 

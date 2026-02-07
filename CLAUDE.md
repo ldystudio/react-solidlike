@@ -65,4 +65,5 @@ When modifying components:
 1. Add or update test cases for the changes
 2. Run `bun test` to ensure all tests pass
 3. Run `bunx biome check <files>` to verify code style
-4. Update both `README.md` (Chinese) and `README.en.md` (English) with new features/changes
+4. Run `bunx tsc --noEmit --pretty 2>&1` and fix any errors
+5. Update both `README.md` (Chinese) and `README.en.md` (English) with new features/changes

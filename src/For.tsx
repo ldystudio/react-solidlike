@@ -52,8 +52,10 @@ export function For<T>({ each, children, keyExtractor, fallback = null, wrapper,
     const items = reverse ? [...each].reverse() : each;
     const elements = items.map((item, i) => {
         const originalIndex = reverse ? each.length - 1 - i : i;
-        const key = keyExtractor ? keyExtractor(item, originalIndex) : originalIndex;
-        return <Fragment key={key}>{children(item, originalIndex, each)}</Fragment>;
+        const child = children(item, originalIndex, each);
+        const childKey = isValidElement(child) ? child.key : null;
+        const key = keyExtractor ? keyExtractor(item, originalIndex) : (childKey ?? originalIndex);
+        return <Fragment key={key}>{child}</Fragment>;
     });
 
     return wrapper && isValidElement(wrapper) ? cloneElement(wrapper, {}, elements) : elements;
