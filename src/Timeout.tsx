@@ -11,7 +11,7 @@ export interface TimeoutProps {
     /** Display mode: 'after' = show after delay, 'before' = hide after delay | 显示模式：'after' = 延迟后显示，'before' = 延迟后隐藏 */
     mode?: TimeoutMode;
     /** Content to show when hidden (only for 'after' mode) | 隐藏时显示的内容（仅 'after' 模式） */
-    fallback?: ReactNode;
+    fallback?: ReactNode | (() => ReactNode);
     /** Callback when timeout occurs | 超时发生时的回调 */
     onTimeout?: () => void;
 }
@@ -59,7 +59,7 @@ export function Timeout({ ms, children, mode = "after", fallback = null, onTimeo
 
     // 'after' mode: show when ready is true
     if (mode === "after") {
-        return ready ? children : fallback;
+        return ready ? children : typeof fallback === "function" ? fallback() : fallback;
     }
 
     // 'before' mode: show when ready is true (starts true, becomes false after timeout)

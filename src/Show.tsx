@@ -6,7 +6,7 @@ export interface ShowProps<T> {
     /** Content to render when condition is truthy | 条件为真时渲染的内容 */
     children: ReactNode | ((value: NonNullable<T>) => ReactNode);
     /** Fallback content when condition is falsy | 条件为假时渲染的备选内容 */
-    fallback?: ReactNode;
+    fallback?: ReactNode | (() => ReactNode);
     /** Callback when condition is falsy (called before rendering fallback) | 条件为假时的回调（在渲染 fallback 之前调用） */
     onFallback?: () => void;
 }
@@ -43,7 +43,7 @@ export interface ShowProps<T> {
 export function Show<T>({ when, children, fallback = null, onFallback }: ShowProps<T>): ReactNode {
     if (!when || isEmpty(when)) {
         onFallback?.();
-        return fallback;
+        return typeof fallback === "function" ? fallback() : fallback;
     }
 
     if (typeof children === "function") {

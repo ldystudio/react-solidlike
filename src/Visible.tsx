@@ -4,7 +4,7 @@ export interface VisibleProps {
     /** Content to render when visible | 可见时渲染的内容 */
     children: ReactNode;
     /** Fallback content before entering viewport | 进入视口前渲染的备选内容 */
-    fallback?: ReactNode;
+    fallback?: ReactNode | (() => ReactNode);
     /** Root margin for intersection observer (e.g., "100px") | 交叉观察器的根边距 */
     rootMargin?: string;
     /** Visibility threshold (0-1) | 可见性阈值 */
@@ -121,5 +121,5 @@ export function Visible({
 
     const shouldRender = once ? hasBeenVisible : isVisible;
 
-    return <div ref={ref}>{shouldRender ? children : fallback}</div>;
+    return <div ref={ref}>{shouldRender ? children : typeof fallback === "function" ? fallback() : fallback}</div>;
 }

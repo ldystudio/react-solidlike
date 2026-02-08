@@ -7,7 +7,7 @@ export type DynamicProps<T extends ElementType> = {
     /** Component or element type to render | 要渲染的组件或元素类型 */
     component: T | null | undefined | false;
     /** Fallback content when component is falsy | 当 component 为 falsy 时渲染的备选内容 */
-    fallback?: ReactNode;
+    fallback?: ReactNode | (() => ReactNode);
 } & PropsOf<T>;
 
 /**
@@ -56,7 +56,7 @@ export type DynamicProps<T extends ElementType> = {
  */
 export function Dynamic<T extends ElementType>({ component, fallback = null, ...props }: DynamicProps<T>): ReactNode {
     if (!component) {
-        return fallback;
+        return typeof fallback === "function" ? fallback() : fallback;
     }
 
     return createElement(component as ComponentType, props);

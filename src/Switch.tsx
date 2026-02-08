@@ -16,7 +16,7 @@ export interface SwitchProps {
     /** Match and Default components | Match 和 Default 组件 */
     children: ReactNode;
     /** Fallback content when no conditions match (can also use Default component) | 所有条件都不匹配时的备选内容（也可用 Default 组件） */
-    fallback?: ReactNode;
+    fallback?: ReactNode | (() => ReactNode);
 }
 
 /**
@@ -126,7 +126,7 @@ function isDefaultElement(child: ReactNode): child is DefaultElement {
 export function Switch({ children, fallback = null }: SwitchProps): ReactNode {
     const childArray = Children.toArray(children);
 
-    let defaultContent: ReactNode = fallback;
+    let defaultContent: ReactNode = typeof fallback === "function" ? fallback() : fallback;
 
     for (const child of childArray) {
         // 检查是否是 Default 组件

@@ -4,7 +4,7 @@ export interface ClientOnlyProps {
     /** Content to render only on client side | 仅在客户端渲染的内容 */
     children: ReactNode | (() => ReactNode);
     /** Fallback content during SSR | SSR 期间渲染的备选内容 */
-    fallback?: ReactNode;
+    fallback?: ReactNode | (() => ReactNode);
 }
 
 /**
@@ -50,7 +50,7 @@ export function ClientOnly({ children, fallback = null }: ClientOnlyProps): Reac
     }, []);
 
     if (!isClient) {
-        return fallback;
+        return typeof fallback === "function" ? fallback() : fallback;
     }
 
     if (typeof children === "function") {

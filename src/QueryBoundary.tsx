@@ -16,11 +16,11 @@ export interface QueryBoundaryProps<T> {
     /** Query result object, usually from @tanstack/react-query's useQuery | 查询结果对象，通常来自 @tanstack/react-query 的 useQuery */
     query: QueryResult<T> | null | undefined;
     /** Content to show while loading | 加载中时显示的内容 */
-    loading?: ReactNode;
+    loading?: ReactNode | (() => ReactNode);
     /** Content to show when error occurs | 发生错误时显示的内容 */
-    error?: ReactNode;
+    error?: ReactNode | (() => ReactNode);
     /** Content to show when data is empty | 数据为空时显示的内容 */
-    empty?: ReactNode;
+    empty?: ReactNode | (() => ReactNode);
     /** Content to render on success, supports render props | 成功时渲染的内容，支持 render props 模式 */
     children: ReactNode | ((data: T) => ReactNode);
     /** Custom empty data check function, defaults to checking null/undefined or empty array | 自定义空数据判断函数，默认检查 data 是否为 null/undefined 或空数组 */
@@ -85,18 +85,18 @@ export function QueryBoundary<T>({
 
     // 加载中状态
     if (isPending) {
-        return loading;
+        return typeof loading === "function" ? loading() : loading;
     }
 
     // 错误状态（仅在没有缓存数据时显示）
     if (isError && isEmptyFn(data)) {
-        return error;
+        return typeof error === "function" ? error() : error;
     }
 
     // 空数据状态（优先使用 query 的 isEmpty，否则使用 isEmptyFn 判断）
     const isEmpty = queryIsEmpty ?? isEmptyFn(data);
     if (isEmpty) {
-        return empty;
+        return typeof empty === "function" ? empty() : empty;
     }
 
     // 成功状态 - 支持 render props

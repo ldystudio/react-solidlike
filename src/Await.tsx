@@ -10,7 +10,7 @@ export interface AwaitProps<T> {
     /** Promise to wait for | 要等待的 Promise */
     promise: Promise<T> | T;
     /** Content to show when Promise is pending | Promise pending 时显示的内容 */
-    loading?: ReactNode;
+    loading?: ReactNode | (() => ReactNode);
     /** Content to show when Promise is rejected | Promise rejected 时显示的内容 */
     error?: ReactNode | ((error: unknown) => ReactNode);
     /** Content to render when Promise is fulfilled | Promise fulfilled 时渲染的内容 */
@@ -90,7 +90,7 @@ export function Await<T>({ promise, loading = null, error = null, children }: Aw
 
     // pending 状态
     if (state.status === "pending") {
-        return loading;
+        return typeof loading === "function" ? loading() : loading;
     }
 
     // rejected 状态
