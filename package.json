@@ -1,6 +1,6 @@
 {
     "name": "react-solidlike",
-    "version": "2.5.2",
+    "version": "2.5.3",
     "description": "Declarative React control flow components inspired by Solid.js, replacing ternary expressions and array.map() in JSX",
     "type": "module",
     "main": "./dist/index.js",
@@ -53,7 +53,7 @@
         "@types/react-dom": "^19.2.3",
         "react": "^19.2.3",
         "react-dom": "^19.2.3",
-        "rolldown": "^1.0.0-rc.2",
+        "rolldown": "^1.0.0-rc.3",
         "typescript": "^5.9.3"
     }
 }
