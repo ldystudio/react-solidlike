@@ -1,4 +1,5 @@
 import { type ComponentProps, type ComponentType, createElement, type ElementType, type ReactNode } from "react";
+import { resolveNode } from "./utils";
 
 /** Get component props type | 获取组件的 props 类型 */
 type PropsOf<T extends ElementType> = ComponentProps<T>;
@@ -56,7 +57,7 @@ export type DynamicProps<T extends ElementType> = {
  */
 export function Dynamic<T extends ElementType>({ component, fallback = null, ...props }: DynamicProps<T>): ReactNode {
     if (!component) {
-        return typeof fallback === "function" ? fallback() : fallback;
+        return resolveNode(fallback);
     }
 
     return createElement(component as ComponentType, props);

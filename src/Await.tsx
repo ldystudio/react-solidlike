@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useState } from "react";
+import { resolveNode } from "./utils";
 
 /** Promise state | Promise 的状态 */
 type PromiseState<T> =
@@ -90,15 +91,12 @@ export function Await<T>({ promise, loading = null, error = null, children }: Aw
 
     // pending 状态
     if (state.status === "pending") {
-        return typeof loading === "function" ? loading() : loading;
+        return resolveNode(loading);
     }
 
     // rejected 状态
     if (state.status === "rejected") {
-        if (typeof error === "function") {
-            return error(state.error);
-        }
-        return error;
+        return typeof error === "function" ? error(state.error) : error;
     }
 
     // fulfilled 状态

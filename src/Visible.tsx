@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import { resolveNode } from "./utils";
 
 export interface VisibleProps {
     /** Content to render when visible | 可见时渲染的内容 */
@@ -121,5 +122,5 @@ export function Visible({
 
     const shouldRender = once ? hasBeenVisible : isVisible;
 
-    return <div ref={ref}>{shouldRender ? children : typeof fallback === "function" ? fallback() : fallback}</div>;
+    return <div ref={ref}>{shouldRender ? children : resolveNode(fallback)}</div>;
 }

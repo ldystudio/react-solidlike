@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useState } from "react";
+import { resolveNode } from "./utils";
 
 /** Timeout mode | 超时模式 */
 export type TimeoutMode = "after" | "before";
@@ -59,7 +60,7 @@ export function Timeout({ ms, children, mode = "after", fallback = null, onTimeo
 
     // 'after' mode: show when ready is true
     if (mode === "after") {
-        return ready ? children : typeof fallback === "function" ? fallback() : fallback;
+        return ready ? children : resolveNode(fallback);
     }
 
     // 'before' mode: show when ready is true (starts true, becomes false after timeout)

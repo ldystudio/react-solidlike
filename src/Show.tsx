@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { resolveNode } from "./utils";
 
 export interface ShowProps<T> {
     /** Condition expression, renders children when truthy | 条件表达式，为真时渲染 children */
@@ -43,7 +44,7 @@ export interface ShowProps<T> {
 export function Show<T>({ when, children, fallback = null, onFallback }: ShowProps<T>): ReactNode {
     if (!when || isEmpty(when)) {
         onFallback?.();
-        return typeof fallback === "function" ? fallback() : fallback;
+        return resolveNode(fallback);
     }
 
     if (typeof children === "function") {

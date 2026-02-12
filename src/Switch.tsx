@@ -1,4 +1,5 @@
 import { Children, type ReactElement, type ReactNode } from "react";
+import { resolveNode } from "./utils";
 
 export interface MatchProps<T> {
     /** Condition expression | 条件表达式 */
@@ -126,7 +127,7 @@ function isDefaultElement(child: ReactNode): child is DefaultElement {
 export function Switch({ children, fallback = null }: SwitchProps): ReactNode {
     const childArray = Children.toArray(children);
 
-    let defaultContent: ReactNode = typeof fallback === "function" ? fallback() : fallback;
+    let defaultContent: ReactNode = resolveNode(fallback);
 
     for (const child of childArray) {
         // 检查是否是 Default 组件

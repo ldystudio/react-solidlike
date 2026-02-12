@@ -4,6 +4,44 @@ import type { QueryResult } from "./QueryBoundary";
 import { QueryBoundary } from "./QueryBoundary";
 
 describe("QueryBoundary 组件", () => {
+    describe("when 条件控制", () => {
+        test("when 为 false 时不渲染任何内容", () => {
+            const query: QueryResult<string[]> = { data: ["a", "b"] };
+            const html = renderToString(
+                <QueryBoundary query={query} when={false}>
+                    <span>content</span>
+                </QueryBoundary>
+            );
+            expect(html).toBe("");
+        });
+
+        test("when 为 true 时正常渲染", () => {
+            const query: QueryResult<string[]> = { data: ["a"] };
+            const html = renderToString(
+                <QueryBoundary query={query} when={true}>
+                    {(data) => <span>{data.join(",")}</span>}
+                </QueryBoundary>
+            );
+            expect(html).toContain("a");
+        });
+
+        test("when 默认为 true", () => {
+            const query: QueryResult<string> = { data: "hello" };
+            const html = renderToString(<QueryBoundary query={query}>{(data) => <span>{data}</span>}</QueryBoundary>);
+            expect(html).toContain("hello");
+        });
+
+        test("when 为 false 时即使 isPending 也不渲染 loading", () => {
+            const query: QueryResult<string> = { isPending: true };
+            const html = renderToString(
+                <QueryBoundary query={query} when={false} loading={<span>Loading</span>}>
+                    <span>content</span>
+                </QueryBoundary>
+            );
+            expect(html).toBe("");
+        });
+    });
+
     describe("query 为 null/undefined", () => {
         test("query 为 null 时不渲染任何内容", () => {
             const html = renderToString(

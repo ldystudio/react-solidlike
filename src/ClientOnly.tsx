@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useState } from "react";
+import { resolveNode } from "./utils";
 
 export interface ClientOnlyProps {
     /** Content to render only on client side | 仅在客户端渲染的内容 */
@@ -50,7 +51,7 @@ export function ClientOnly({ children, fallback = null }: ClientOnlyProps): Reac
     }, []);
 
     if (!isClient) {
-        return typeof fallback === "function" ? fallback() : fallback;
+        return resolveNode(fallback);
     }
 
     if (typeof children === "function") {
