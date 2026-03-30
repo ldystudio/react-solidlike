@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { resolveNode } from "./utils";
+import { resolveNode, shouldRenderCondition } from "./utils";
 
 /** Query result object type definition | 查询结果对象的类型定义 */
 export interface QueryResult<T> {
@@ -16,8 +16,8 @@ export interface QueryResult<T> {
 export interface QueryBoundaryProps<T> {
     /** Query result object, usually from @tanstack/react-query's useQuery | 查询结果对象，通常来自 @tanstack/react-query 的 useQuery */
     query: QueryResult<T> | null | undefined;
-    /** When false, renders nothing directly | 为 false 时直接不渲染任何内容 */
-    when?: boolean;
+    /** Conditional gate, renders nothing when falsy or empty like Show/For | 条件门禁，和 Show/For 一样在假值或空值时直接不渲染 */
+    when?: unknown;
     /** Content to show while loading | 加载中时显示的内容 */
     loading?: ReactNode | (() => ReactNode);
     /** Content to show when error occurs | 发生错误时显示的内容 */
@@ -80,8 +80,8 @@ export function QueryBoundary<T>({
     children,
     isEmptyFn = defaultIsEmpty,
 }: QueryBoundaryProps<T>): ReactNode {
-    // when 为 false 或 query 为 null/undefined 时不渲染任何内容
-    if (!when || !query) {
+    // when 未通过或 query 为 null/undefined 时不渲染任何内容
+    if (!shouldRenderCondition(when) || !query) {
         return null;
     }
 

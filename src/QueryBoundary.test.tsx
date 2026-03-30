@@ -25,6 +25,36 @@ describe("QueryBoundary 组件", () => {
             expect(html).toContain("a");
         });
 
+        test("when 为空对象时不渲染任何内容", () => {
+            const query: QueryResult<string[]> = { data: ["a"] };
+            const html = renderToString(
+                <QueryBoundary query={query} when={{}}>
+                    {(data) => <span>{data.join(",")}</span>}
+                </QueryBoundary>
+            );
+            expect(html).toBe("");
+        });
+
+        test("when 为空 Map 时不渲染任何内容", () => {
+            const query: QueryResult<string[]> = { data: ["a"] };
+            const html = renderToString(
+                <QueryBoundary query={query} when={new Map()}>
+                    {(data) => <span>{data.join(",")}</span>}
+                </QueryBoundary>
+            );
+            expect(html).toBe("");
+        });
+
+        test("when 为非空对象时正常渲染", () => {
+            const query: QueryResult<string[]> = { data: ["a"] };
+            const html = renderToString(
+                <QueryBoundary query={query} when={{ ready: true }}>
+                    {(data) => <span>{data.join(",")}</span>}
+                </QueryBoundary>
+            );
+            expect(html).toContain("a");
+        });
+
         test("when 默认为 true", () => {
             const query: QueryResult<string> = { data: "hello" };
             const html = renderToString(<QueryBoundary query={query}>{(data) => <span>{data}</span>}</QueryBoundary>);

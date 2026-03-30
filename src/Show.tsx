@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { resolveNode } from "./utils";
+import { resolveNode, shouldRenderCondition } from "./utils";
 
 export interface ShowProps<T> {
     /** Condition expression, renders children when truthy | 条件表达式，为真时渲染 children */
@@ -42,7 +42,7 @@ export interface ShowProps<T> {
  * </Show>
  */
 export function Show<T>({ when, children, fallback = null, onFallback }: ShowProps<T>): ReactNode {
-    if (!when || isEmpty(when)) {
+    if (!shouldRenderCondition(when)) {
         onFallback?.();
         return resolveNode(fallback);
     }
@@ -52,13 +52,4 @@ export function Show<T>({ when, children, fallback = null, onFallback }: ShowPro
     }
 
     return children;
-}
-
-function isEmpty(value: unknown): boolean {
-    if (Array.isArray(value)) return value.length === 0;
-    if (value instanceof Map || value instanceof Set) return value.size === 0;
-    if (typeof value === "object" && value !== null && Object.getPrototypeOf(value) === Object.prototype) {
-        return Object.keys(value).length === 0;
-    }
-    return false;
 }

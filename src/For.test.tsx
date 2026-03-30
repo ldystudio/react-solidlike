@@ -108,6 +108,57 @@ describe("For 组件", () => {
         });
     });
 
+    describe("when 参数", () => {
+        test("when 为 false 时渲染 fallback", () => {
+            const html = renderToString(
+                <For each={["apple"]} when={false} fallback={<div>Hidden</div>}>
+                    {(item) => <span>{item}</span>}
+                </For>
+            );
+            expect(html).toContain("Hidden");
+            expect(html).not.toContain("apple");
+        });
+
+        test("when 为空对象时渲染 fallback", () => {
+            const html = renderToString(
+                <For each={["apple"]} when={{}} fallback={<div>Hidden</div>}>
+                    {(item) => <span>{item}</span>}
+                </For>
+            );
+            expect(html).toContain("Hidden");
+            expect(html).not.toContain("apple");
+        });
+
+        test("when 为空 Map 时渲染 fallback", () => {
+            const html = renderToString(
+                <For each={["apple"]} when={new Map()} fallback={<div>Hidden</div>}>
+                    {(item) => <span>{item}</span>}
+                </For>
+            );
+            expect(html).toContain("Hidden");
+            expect(html).not.toContain("apple");
+        });
+
+        test("when 为真值时正常渲染列表", () => {
+            const html = renderToString(
+                <For each={["apple", "banana"]} when={{ ready: true }}>
+                    {(item) => <span>{item}</span>}
+                </For>
+            );
+            expect(html).toContain("apple");
+            expect(html).toContain("banana");
+        });
+
+        test("when 通过时仍保留 each 为空走 fallback 的语义", () => {
+            const html = renderToString(
+                <For each={[] as string[]} when={{ ready: true }} fallback={<div>Empty</div>}>
+                    {(item) => <span>{item}</span>}
+                </For>
+            );
+            expect(html).toContain("Empty");
+        });
+    });
+
     describe("keyExtractor 功能", () => {
         test("使用 keyExtractor 提取 key", () => {
             const items = [

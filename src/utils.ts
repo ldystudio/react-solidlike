@@ -7,3 +7,17 @@ export type ResolvableNode = ReactNode | (() => ReactNode);
 export function resolveNode(node: ResolvableNode): ReactNode {
     return typeof node === "function" ? node() : node;
 }
+
+/** Whether a value should pass conditional rendering checks | 值是否应通过条件渲染检查 */
+export function shouldRenderCondition(value: unknown): boolean {
+    return Boolean(value) && !isEmptyConditionValue(value);
+}
+
+function isEmptyConditionValue(value: unknown): boolean {
+    if (Array.isArray(value)) return value.length === 0;
+    if (value instanceof Map || value instanceof Set) return value.size === 0;
+    if (typeof value === "object" && value !== null && Object.getPrototypeOf(value) === Object.prototype) {
+        return Object.keys(value).length === 0;
+    }
+    return false;
+}

@@ -1,8 +1,11 @@
 import { cloneElement, Fragment, isValidElement, type Key, type ReactElement, type ReactNode } from "react";
+import { shouldRenderCondition } from "./utils";
 
 export interface ForProps<T> {
     /** Array to iterate over | 要遍历的数组 */
     each: T[] | readonly T[] | null | undefined;
+    /** Condition expression, renders list only when truthy and non-empty like Show | 条件表达式，和 Show 一样仅在真值且非空时渲染列表 */
+    when?: unknown;
     /** Render function for each element, receives item, index and original array | 渲染每个元素的函数，接收元素、索引和原数组 */
     children: (item: T, index: number, array: T[] | readonly T[]) => ReactNode;
     /** Function to extract key from element, defaults to index | 从元素中提取 key 的函数，默认使用索引 */
@@ -39,13 +42,27 @@ export interface ForProps<T> {
  * </For>
  *
  * @example
+ * // With conditional gate like Show | 和 Show 一样增加条件门禁
+ * <For each={items} when={isReady} fallback={<Loading />}>
+ *   {(item) => <ListItem item={item} />}
+ * </For>
+ *
+ * @example
  * // With wrapper element | 使用包装元素
  * <For each={items} wrapper={<ul className="list" />}>
  *   {(item) => <li>{item.name}</li>}
  * </For>
  */
-export function For<T>({ each, children, keyExtractor, fallback = null, wrapper, reverse }: ForProps<T>): ReactNode {
-    if (!each || each.length === 0) {
+export function For<T>({
+    each,
+    when = true,
+    children,
+    keyExtractor,
+    fallback = null,
+    wrapper,
+    reverse,
+}: ForProps<T>): ReactNode {
+    if (!shouldRenderCondition(when) || !each || each.length === 0) {
         return fallback;
     }
 
