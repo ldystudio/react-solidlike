@@ -376,23 +376,23 @@ Shows or hides content after a specified delay. Useful for auto-dismissing notif
 ```tsx
 import { Timeout } from "react-solidlike";
 
-// Show after delay (mode="after", default)
-<Timeout ms={1000} mode="after" fallback={<Spinner />}>
+// Show after delay (mode="show", default)
+<Timeout ms={1000} mode="show" fallback={<Spinner />}>
   <DelayedContent />
 </Timeout>
 
-// Hide after delay (mode="before")
-<Timeout ms={3000} mode="before">
+// Hide after delay (mode="hide")
+<Timeout ms={3000} mode="hide">
   <Toast message="Success!" />
 </Timeout>
 
 // Auto-dismiss notification
-<Timeout ms={5000} mode="before" onTimeout={() => console.log("dismissed")}>
+<Timeout ms={5000} mode="hide" onTimeout={() => console.log("dismissed")}>
   <Notification type="success">Saved successfully</Notification>
 </Timeout>
 
 // Delayed render with loading state
-<Timeout ms={2000} mode="after" fallback={<Skeleton />}>
+<Timeout ms={2000} mode="show" fallback={<Skeleton />}>
   <ExpensiveComponent />
 </Timeout>
 ```
@@ -402,9 +402,9 @@ import { Timeout } from "react-solidlike";
 | Prop        | Type                  | Description                                                                     |
 | ----------- | --------------------- | ------------------------------------------------------------------------------- |
 | `ms`        | `number`              | Delay time in milliseconds                                                      |
-| `mode`      | `'after' \| 'before'` | `'after'` = show after delay, `'before'` = hide after delay (default `'after'`) |
+| `mode`      | `'show' \| 'hide'`    | `'show'` = show after delay, `'hide'` = hide after delay; legacy aliases: `'after'` / `'before'` (default `'show'`) |
 | `children`  | `ReactNode`           | Content to render                                                               |
-| `fallback`  | `ReactNode`           | Content to show while waiting (`after` mode only)                               |
+| `fallback`  | `ReactNode`           | Content to show while waiting (`show` mode only)                               |
 | `onTimeout` | `() => void`          | Callback when timeout occurs                                                    |
 
 ### `<Visible>` - Visibility-based Rendering (Web only)

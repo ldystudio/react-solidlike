@@ -376,23 +376,23 @@ import { ClientOnly } from "react-solidlike";
 ```tsx
 import { Timeout } from "react-solidlike";
 
-// 延迟后显示（mode="after"，默认）
-<Timeout ms={1000} mode="after" fallback={<Spinner />}>
+// 延迟后显示（mode="show"，默认）
+<Timeout ms={1000} mode="show" fallback={<Spinner />}>
   <DelayedContent />
 </Timeout>
 
-// 延迟后隐藏（mode="before"）
-<Timeout ms={3000} mode="before">
+// 延迟后隐藏（mode="hide"）
+<Timeout ms={3000} mode="hide">
   <Toast message="操作成功！" />
 </Timeout>
 
 // 自动消失的提示
-<Timeout ms={5000} mode="before" onTimeout={() => console.log("已消失")}>
+<Timeout ms={5000} mode="hide" onTimeout={() => console.log("已消失")}>
   <Notification type="success">保存成功</Notification>
 </Timeout>
 
 // 带加载状态的延迟渲染
-<Timeout ms={2000} mode="after" fallback={<Skeleton />}>
+<Timeout ms={2000} mode="show" fallback={<Skeleton />}>
   <ExpensiveComponent />
 </Timeout>
 ```
@@ -402,9 +402,9 @@ import { Timeout } from "react-solidlike";
 | 属性        | 类型                  | 描述                                                            |
 | ----------- | --------------------- | --------------------------------------------------------------- |
 | `ms`        | `number`              | 延迟时间（毫秒）                                                |
-| `mode`      | `'after' \| 'before'` | `'after'` = 延迟后显示，`'before'` = 延迟后隐藏，默认 `'after'` |
+| `mode`      | `'show' \| 'hide'`    | `'show'` = 延迟后显示，`'hide'` = 延迟后隐藏；兼容旧别名 `'after'` / `'before'`，默认 `'show'` |
 | `children`  | `ReactNode`           | 要渲染的内容                                                    |
-| `fallback`  | `ReactNode`           | 等待时显示的内容（仅 `after` 模式）                             |
+| `fallback`  | `ReactNode`           | 等待时显示的内容（仅 `show` 模式）                             |
 | `onTimeout` | `() => void`          | 超时发生时的回调                                                |
 
 ### `<Visible>` - 可见性渲染（仅 Web）

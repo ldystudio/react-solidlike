@@ -9,10 +9,10 @@ afterEach(() => {
 });
 
 describe("Timeout 组件", () => {
-    describe("'after' 模式（延迟后显示）", () => {
+    describe("'show' 模式（延迟后显示）", () => {
         test("SSR 时显示 fallback（等待超时）", () => {
             const html = renderToString(
-                <Timeout ms={1000} mode="after" fallback={<span>loading...</span>}>
+                <Timeout ms={1000} mode="show" fallback={<span>loading...</span>}>
                     <span>content</span>
                 </Timeout>
             );
@@ -22,7 +22,7 @@ describe("Timeout 组件", () => {
 
         test("SSR 时无 fallback 则渲染空", () => {
             const html = renderToString(
-                <Timeout ms={1000} mode="after">
+                <Timeout ms={1000} mode="show">
                     <span>content</span>
                 </Timeout>
             );
@@ -31,7 +31,7 @@ describe("Timeout 组件", () => {
 
         test("渲染 children 内容", () => {
             const html = renderToString(
-                <Timeout ms={1000} mode="after">
+                <Timeout ms={1000} mode="show">
                     <span>delayed content</span>
                 </Timeout>
             );
@@ -40,23 +40,23 @@ describe("Timeout 组件", () => {
         });
     });
 
-    describe("'before' 模式（延迟后隐藏）", () => {
+    describe("'hide' 模式（延迟后隐藏）", () => {
         test("SSR 时显示 children（初始可见）", () => {
             const html = renderToString(
-                <Timeout ms={1000} mode="before">
+                <Timeout ms={1000} mode="hide">
                     <span>temporary content</span>
                 </Timeout>
             );
             expect(html).toContain("temporary content");
         });
 
-        test("默认模式为 'after'", () => {
+        test("默认模式为 'show'", () => {
             const html = renderToString(
                 <Timeout ms={1000} fallback={<span>wait</span>}>
                     <span>content</span>
                 </Timeout>
             );
-            // 默认 'after'，SSR 时显示 fallback
+            // 默认 'show'，SSR 时显示 fallback
             expect(html).toContain("wait");
         });
     });
@@ -77,7 +77,7 @@ describe("Timeout 组件", () => {
     describe("复杂 children", () => {
         test("支持嵌套元素", () => {
             const html = renderToString(
-                <Timeout ms={1000} mode="before">
+                <Timeout ms={1000} mode="hide">
                     <div>
                         <span>first</span>
                         <span>second</span>
@@ -90,7 +90,7 @@ describe("Timeout 组件", () => {
 
         test("支持文本节点", () => {
             const html = renderToString(
-                <Timeout ms={1000} mode="before">
+                <Timeout ms={1000} mode="hide">
                     plain text
                 </Timeout>
             );
@@ -101,7 +101,7 @@ describe("Timeout 组件", () => {
     describe("边界情况", () => {
         test("ms 为 0 时立即触发", () => {
             const html = renderToString(
-                <Timeout ms={0} mode="before">
+                <Timeout ms={0} mode="hide">
                     <span>content</span>
                 </Timeout>
             );
@@ -111,7 +111,7 @@ describe("Timeout 组件", () => {
 
         test("children 为 null 时正常处理", () => {
             const html = renderToString(
-                <Timeout ms={1000} mode="before">
+                <Timeout ms={1000} mode="hide">
                     {null}
                 </Timeout>
             );
@@ -123,7 +123,7 @@ describe("Timeout 组件", () => {
             const html = renderToString(
                 <Timeout
                     ms={1000}
-                    mode="after"
+                    mode="show"
                     fallback={
                         <div className="loading">
                             <span>Spinner</span>
@@ -139,10 +139,10 @@ describe("Timeout 组件", () => {
     });
 
     describe("客户端渲染行为", () => {
-        describe("'after' 模式（延迟后显示）", () => {
+        describe("'show' 模式（延迟后显示）", () => {
             test("初始显示 fallback，延迟后显示 children", async () => {
                 render(
-                    <Timeout ms={100} mode="after" fallback={<span data-testid="fallback">Loading...</span>}>
+                    <Timeout ms={100} mode="show" fallback={<span data-testid="fallback">Loading...</span>}>
                         <span data-testid="content">Delayed Content</span>
                     </Timeout>
                 );
@@ -163,7 +163,7 @@ describe("Timeout 组件", () => {
 
             test("无 fallback 时初始为空，延迟后显示 children", async () => {
                 render(
-                    <Timeout ms={100} mode="after">
+                    <Timeout ms={100} mode="show">
                         <span data-testid="content">Delayed Content</span>
                     </Timeout>
                 );
@@ -185,7 +185,7 @@ describe("Timeout 组件", () => {
                 render(
                     <Timeout
                         ms={100}
-                        mode="after"
+                        mode="show"
                         onTimeout={onTimeout}
                         fallback={<span data-testid="fallback">Loading</span>}
                     >
@@ -204,10 +204,10 @@ describe("Timeout 组件", () => {
             });
         });
 
-        describe("'before' 模式（延迟后隐藏）", () => {
+        describe("'hide' 模式（延迟后隐藏）", () => {
             test("初始显示 children，延迟后隐藏", async () => {
                 render(
-                    <Timeout ms={100} mode="before">
+                    <Timeout ms={100} mode="hide">
                         <span data-testid="content">Temporary Content</span>
                     </Timeout>
                 );
@@ -227,7 +227,7 @@ describe("Timeout 组件", () => {
             test("超时时调用 onTimeout 回调", async () => {
                 const onTimeout = mock(() => {});
                 render(
-                    <Timeout ms={100} mode="before" onTimeout={onTimeout}>
+                    <Timeout ms={100} mode="hide" onTimeout={onTimeout}>
                         <span data-testid="content">Content</span>
                     </Timeout>
                 );
@@ -246,7 +246,7 @@ describe("Timeout 组件", () => {
         describe("边界情况", () => {
             test("ms 为 0 时立即切换状态", async () => {
                 render(
-                    <Timeout ms={0} mode="after" fallback={<span data-testid="fallback">Loading</span>}>
+                    <Timeout ms={0} mode="show" fallback={<span data-testid="fallback">Loading</span>}>
                         <span data-testid="content">Content</span>
                     </Timeout>
                 );
@@ -263,7 +263,7 @@ describe("Timeout 组件", () => {
             test("组件卸载时清除定时器（不触发回调）", async () => {
                 const onTimeout = mock(() => {});
                 const { unmount } = render(
-                    <Timeout ms={5000} mode="after" onTimeout={onTimeout}>
+                    <Timeout ms={5000} mode="show" onTimeout={onTimeout}>
                         <span data-testid="content">Content</span>
                     </Timeout>
                 );
@@ -274,6 +274,42 @@ describe("Timeout 组件", () => {
                 // 等待足够时间确保定时器被清除
                 await new Promise((resolve) => setTimeout(resolve, 100));
                 expect(onTimeout).not.toHaveBeenCalled();
+            });
+        });
+
+        describe("兼容旧 mode 别名", () => {
+            test("'after' 等同于 'show'", async () => {
+                render(
+                    <Timeout ms={100} mode="after" fallback={<span data-testid="fallback">Loading...</span>}>
+                        <span data-testid="content">Delayed Content</span>
+                    </Timeout>
+                );
+
+                expect(screen.getByTestId("fallback")).toBeTruthy();
+
+                await waitFor(
+                    () => {
+                        expect(screen.getByTestId("content")).toBeTruthy();
+                    },
+                    { timeout: 500 }
+                );
+            });
+
+            test("'before' 等同于 'hide'", async () => {
+                render(
+                    <Timeout ms={100} mode="before">
+                        <span data-testid="content">Temporary Content</span>
+                    </Timeout>
+                );
+
+                expect(screen.getByTestId("content")).toBeTruthy();
+
+                await waitFor(
+                    () => {
+                        expect(screen.queryByTestId("content")).toBeNull();
+                    },
+                    { timeout: 500 }
+                );
             });
         });
     });
