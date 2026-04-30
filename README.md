@@ -311,6 +311,7 @@ function UserList() {
 | `query`     | `QueryResult<T>`                      | Query result object   |
 | `loading`   | `ReactNode`                           | Loading state content |
 | `error`     | `ReactNode`                           | Error state content   |
+| `onError`   | `(error: unknown) => void`            | Error callback        |
 | `empty`     | `ReactNode`                           | Empty state content   |
 | `children`  | `ReactNode \| (data: T) => ReactNode` | Success content       |
 | `isEmptyFn` | `(data: T) => boolean`                | Custom empty check    |

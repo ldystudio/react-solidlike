@@ -311,6 +311,7 @@ function UserList() {
 | `query`     | `QueryResult<T>`                      | 查询结果对象 |
 | `loading`   | `ReactNode`                           | 加载中显示   |
 | `error`     | `ReactNode`                           | 错误时显示   |
+| `onError`   | `(error: unknown) => void`            | 错误回调     |
 | `empty`     | `ReactNode`                           | 空数据显示   |
 | `children`  | `ReactNode \| (data: T) => ReactNode` | 成功时渲染   |
 | `isEmptyFn` | `(data: T) => boolean`                | 自定义空判断 |

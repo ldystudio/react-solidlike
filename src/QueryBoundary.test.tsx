@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, mock, test } from "bun:test";
 import { renderToString } from "react-dom/server";
 import type { QueryResult } from "./QueryBoundary";
 import { QueryBoundary } from "./QueryBoundary";
@@ -168,6 +168,37 @@ describe("QueryBoundary 组件", () => {
                 </QueryBoundary>
             );
             expect(html).toBe("");
+        });
+
+        test("isError 为 true 且无数据时调用 onError", () => {
+            const error = new Error("Query failed");
+            const onError = mock(() => {});
+            const query: QueryResult<string> = { isError: true, error };
+
+            renderToString(
+                <QueryBoundary query={query} onError={onError}>
+                    <span>content</span>
+                </QueryBoundary>
+            );
+
+            expect(onError).toHaveBeenCalledWith(error);
+        });
+
+        test("isError 为 true 但有缓存数据时不调用 onError", () => {
+            const onError = mock(() => {});
+            const query: QueryResult<string[]> = {
+                isError: true,
+                data: ["cached"],
+                error: new Error("Query failed"),
+            };
+
+            renderToString(
+                <QueryBoundary query={query} onError={onError}>
+                    {(data) => <span>Data: {data.join(",")}</span>}
+                </QueryBoundary>
+            );
+
+            expect(onError).not.toHaveBeenCalled();
         });
     });
 

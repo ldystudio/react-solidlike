@@ -5,6 +5,8 @@ import { resolveNode, shouldRenderCondition } from "./utils";
 export interface QueryResult<T> {
     /** Data returned by query | 查询返回的数据 */
     data?: T;
+    /** Error returned by query | 查询返回的错误 */
+    error?: unknown;
     /** Whether loading is in progress | 是否正在加载中 */
     isPending?: boolean;
     /** Whether an error occurred | 是否发生错误 */
@@ -22,6 +24,8 @@ export interface QueryBoundaryProps<T> {
     loading?: ReactNode | (() => ReactNode);
     /** Content to show when error occurs | 发生错误时显示的内容 */
     error?: ReactNode | (() => ReactNode);
+    /** Callback when error occurs | 错误发生时的回调 */
+    onError?: (error: unknown) => void;
     /** Content to show when data is empty | 数据为空时显示的内容 */
     empty?: ReactNode | (() => ReactNode);
     /** Content to render on success, supports render props | 成功时渲染的内容，支持 render props 模式 */
@@ -76,6 +80,7 @@ export function QueryBoundary<T>({
     when = true,
     loading = null,
     error = null,
+    onError,
     empty = null,
     children,
     isEmptyFn = defaultIsEmpty,
@@ -85,7 +90,7 @@ export function QueryBoundary<T>({
         return null;
     }
 
-    const { data, isPending, isError, isEmpty: queryIsEmpty } = query;
+    const { data, error: queryError, isPending, isError, isEmpty: queryIsEmpty } = query;
 
     // 加载中状态
     if (isPending) {
@@ -94,6 +99,7 @@ export function QueryBoundary<T>({
 
     // 错误状态（仅在没有缓存数据时显示）
     if (isError && isEmptyFn(data)) {
+        onError?.(queryError);
         return resolveNode(error);
     }
 
