@@ -1,17 +1,14 @@
 import { cloneElement, Fragment, isValidElement, type Key, type ReactElement, type ReactNode } from "react";
+import { Show, type ShowProps } from "./Show";
 import { shouldRenderCondition } from "./utils";
 
-export interface ForProps<T> {
+export interface ForProps<T> extends Partial<Omit<ShowProps<unknown>, "children">> {
     /** Array to iterate over | 要遍历的数组 */
     each: T[] | readonly T[] | null | undefined;
-    /** Condition expression, renders list only when truthy and non-empty like Show | 条件表达式，和 Show 一样仅在真值且非空时渲染列表 */
-    when?: unknown;
     /** Render function for each element, receives item, index and original array | 渲染每个元素的函数，接收元素、索引和原数组 */
     children: (item: T, index: number, array: T[] | readonly T[]) => ReactNode;
     /** Function to extract key from element, defaults to index | 从元素中提取 key 的函数，默认使用索引 */
     keyExtractor?: (item: T, index: number) => Key;
-    /** Fallback content when array is empty | 数组为空时渲染的备选内容 */
-    fallback?: ReactNode;
     /** Wrapper element for all rendered elements | 包装所有渲染元素的元素 */
     wrapper?: ReactElement;
     /** Reverse the rendering order | 倒序渲染 */
@@ -59,21 +56,29 @@ export function For<T>({
     children,
     keyExtractor,
     fallback = null,
+    onShow,
+    onFallback,
     wrapper,
     reverse,
 }: ForProps<T>): ReactNode {
-    if (!shouldRenderCondition(when) || !each || each.length === 0) {
-        return fallback;
-    }
+    const source = each ?? [];
 
-    const items = reverse ? [...each].reverse() : each;
-    const elements = items.map((item, i) => {
-        const originalIndex = reverse ? each.length - 1 - i : i;
-        const child = children(item, originalIndex, each);
-        const childKey = isValidElement(child) ? child.key : null;
-        const key = keyExtractor ? keyExtractor(item, originalIndex) : (childKey ?? originalIndex);
-        return <Fragment key={key}>{child}</Fragment>;
+    return Show({
+        when: shouldRenderCondition(when) && source.length > 0,
+        fallback,
+        onShow,
+        onFallback,
+        children: () => {
+            const items = reverse ? [...source].reverse() : source;
+            const elements = items.map((item, i) => {
+                const originalIndex = reverse ? source.length - 1 - i : i;
+                const child = children(item, originalIndex, source);
+                const childKey = isValidElement(child) ? child.key : null;
+                const key = keyExtractor ? keyExtractor(item, originalIndex) : (childKey ?? originalIndex);
+                return <Fragment key={key}>{child}</Fragment>;
+            });
+
+            return wrapper && isValidElement(wrapper) ? cloneElement(wrapper, {}, elements) : elements;
+        },
     });
-
-    return wrapper && isValidElement(wrapper) ? cloneElement(wrapper, {}, elements) : elements;
 }

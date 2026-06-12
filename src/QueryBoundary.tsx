@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Show, type ShowProps } from "./Show";
 import { resolveNode, shouldRenderCondition } from "./utils";
 
 /** Query result object type definition | 查询结果对象的类型定义 */
@@ -15,13 +16,9 @@ export interface QueryResult<T> {
     isEmpty?: boolean;
 }
 
-export interface QueryBoundaryProps<T> {
+export interface QueryBoundaryProps<T> extends Partial<Omit<ShowProps<unknown>, "children">> {
     /** Query result object, usually from @tanstack/react-query's useQuery | 查询结果对象，通常来自 @tanstack/react-query 的 useQuery */
     query: QueryResult<T> | null | undefined;
-    /** Conditional gate, renders fallback when falsy or empty like Show/For | 条件门禁，和 Show/For 一样在假值或空值时渲染 fallback */
-    when?: unknown;
-    /** Content to show when condition is falsy | 条件为假时显示的内容 */
-    fallback?: ReactNode | (() => ReactNode);
     /** Content to show while loading | 加载中时显示的内容 */
     loading?: ReactNode | (() => ReactNode);
     /** Content to show when error occurs | 发生错误时显示的内容 */
@@ -81,6 +78,8 @@ export function QueryBoundary<T>({
     query,
     when = true,
     fallback = null,
+    onShow,
+    onFallback,
     loading = null,
     error = null,
     onError,
@@ -88,34 +87,37 @@ export function QueryBoundary<T>({
     children,
     isEmptyFn = defaultIsEmpty,
 }: QueryBoundaryProps<T>): ReactNode {
-    // when 未通过或 query 为 null/undefined 时渲染 fallback
-    if (!shouldRenderCondition(when) || !query) {
-        return resolveNode(fallback);
-    }
+    return Show({
+        when: shouldRenderCondition(when) && !!query,
+        fallback,
+        onShow,
+        onFallback,
+        children: () => {
+            const { data, error: queryError, isPending, isError, isEmpty: queryIsEmpty } = query as QueryResult<T>;
 
-    const { data, error: queryError, isPending, isError, isEmpty: queryIsEmpty } = query;
+            // 加载中状态
+            if (isPending) {
+                return resolveNode(loading);
+            }
 
-    // 加载中状态
-    if (isPending) {
-        return resolveNode(loading);
-    }
+            // 错误状态（仅在没有缓存数据时显示）
+            if (isError && isEmptyFn(data)) {
+                onError?.(queryError);
+                return resolveNode(error);
+            }
 
-    // 错误状态（仅在没有缓存数据时显示）
-    if (isError && isEmptyFn(data)) {
-        onError?.(queryError);
-        return resolveNode(error);
-    }
+            // 空数据状态（优先使用 query 的 isEmpty，否则使用 isEmptyFn 判断）
+            const isEmpty = queryIsEmpty ?? isEmptyFn(data);
+            if (isEmpty) {
+                return resolveNode(empty);
+            }
 
-    // 空数据状态（优先使用 query 的 isEmpty，否则使用 isEmptyFn 判断）
-    const isEmpty = queryIsEmpty ?? isEmptyFn(data);
-    if (isEmpty) {
-        return resolveNode(empty);
-    }
+            // 成功状态 - 支持 render props
+            if (typeof children === "function") {
+                return children(data as T);
+            }
 
-    // 成功状态 - 支持 render props
-    if (typeof children === "function") {
-        return children(data as T);
-    }
-
-    return children;
+            return children;
+        },
+    });
 }

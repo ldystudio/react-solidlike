@@ -141,6 +141,46 @@ describe("QueryBoundary 组件", () => {
         });
     });
 
+    describe("Show 回调透传", () => {
+        test("when 通过且 query 存在时调用 onShow", () => {
+            const onShow = mock(() => {});
+            const query: QueryResult<string> = { data: "hello" };
+
+            renderToString(
+                <QueryBoundary query={query} onShow={onShow}>
+                    {(data) => <span>{data}</span>}
+                </QueryBoundary>
+            );
+
+            expect(onShow).toHaveBeenCalledTimes(1);
+        });
+
+        test("when 不通过时调用 onFallback", () => {
+            const onFallback = mock(() => {});
+            const query: QueryResult<string> = { data: "hello" };
+
+            renderToString(
+                <QueryBoundary query={query} when={false} onFallback={onFallback}>
+                    {(data) => <span>{data}</span>}
+                </QueryBoundary>
+            );
+
+            expect(onFallback).toHaveBeenCalledTimes(1);
+        });
+
+        test("query 为空时调用 onFallback", () => {
+            const onFallback = mock(() => {});
+
+            renderToString(
+                <QueryBoundary query={null} onFallback={onFallback}>
+                    <span>content</span>
+                </QueryBoundary>
+            );
+
+            expect(onFallback).toHaveBeenCalledTimes(1);
+        });
+    });
+
     describe("加载状态", () => {
         test("isPending 为 true 时渲染 loading", () => {
             const query: QueryResult<string> = { isPending: true };

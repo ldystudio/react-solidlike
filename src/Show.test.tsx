@@ -326,6 +326,53 @@ describe("Show 组件", () => {
         });
     });
 
+    describe("onShow 回调", () => {
+        test("条件为真时调用 onShow", () => {
+            const onShow = mock(() => {});
+            renderToString(
+                <Show when={true} onShow={onShow}>
+                    <span>content</span>
+                </Show>
+            );
+            expect(onShow).toHaveBeenCalledTimes(1);
+        });
+
+        test("条件为假时不调用 onShow", () => {
+            const onShow = mock(() => {});
+            renderToString(
+                <Show when={false} onShow={onShow}>
+                    <span>content</span>
+                </Show>
+            );
+            expect(onShow).not.toHaveBeenCalled();
+        });
+
+        test("onShow 与 render props 同时使用", () => {
+            const onShow = mock(() => {});
+            const user = { name: "Alice" };
+            const html = renderToString(
+                <Show when={user} onShow={onShow}>
+                    {(u) => <span>Hello, {u.name}</span>}
+                </Show>
+            );
+            expect(onShow).toHaveBeenCalledTimes(1);
+            expect(html).toContain("Hello");
+            expect(html).toContain("Alice");
+        });
+
+        test("onShow 与 onFallback 只调用匹配分支", () => {
+            const onShow = mock(() => {});
+            const onFallback = mock(() => {});
+            renderToString(
+                <Show when={true} onShow={onShow} onFallback={onFallback}>
+                    <span>content</span>
+                </Show>
+            );
+            expect(onShow).toHaveBeenCalledTimes(1);
+            expect(onFallback).not.toHaveBeenCalled();
+        });
+    });
+
     describe("onFallback 回调", () => {
         test("条件为假时调用 onFallback", () => {
             const onFallback = mock(() => {});

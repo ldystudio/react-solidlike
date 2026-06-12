@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, mock, test } from "bun:test";
 import type { ReactElement } from "react";
 import { renderToString } from "react-dom/server";
 import { For } from "./For";
@@ -156,6 +156,47 @@ describe("For 组件", () => {
                 </For>
             );
             expect(html).toContain("Empty");
+        });
+    });
+
+    describe("Show 回调透传", () => {
+        test("渲染列表时调用 onShow", () => {
+            const onShow = mock(() => {});
+            renderToString(
+                <For each={["apple"]} onShow={onShow}>
+                    {(item) => <span>{item}</span>}
+                </For>
+            );
+            expect(onShow).toHaveBeenCalledTimes(1);
+        });
+
+        test("when 不通过时调用 onFallback", () => {
+            const onFallback = mock(() => {});
+            renderToString(
+                <For each={["apple"]} when={false} onFallback={onFallback}>
+                    {(item) => <span>{item}</span>}
+                </For>
+            );
+            expect(onFallback).toHaveBeenCalledTimes(1);
+        });
+
+        test("空数组时调用 onFallback", () => {
+            const onFallback = mock(() => {});
+            renderToString(
+                <For each={[] as string[]} onFallback={onFallback}>
+                    {(item) => <span>{item}</span>}
+                </For>
+            );
+            expect(onFallback).toHaveBeenCalledTimes(1);
+        });
+
+        test("fallback 支持函数", () => {
+            const html = renderToString(
+                <For each={[] as string[]} fallback={() => <div>Empty function</div>}>
+                    {(item) => <span>{item}</span>}
+                </For>
+            );
+            expect(html).toContain("Empty function");
         });
     });
 
