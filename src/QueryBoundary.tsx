@@ -18,8 +18,10 @@ export interface QueryResult<T> {
 export interface QueryBoundaryProps<T> {
     /** Query result object, usually from @tanstack/react-query's useQuery | 查询结果对象，通常来自 @tanstack/react-query 的 useQuery */
     query: QueryResult<T> | null | undefined;
-    /** Conditional gate, renders nothing when falsy or empty like Show/For | 条件门禁，和 Show/For 一样在假值或空值时直接不渲染 */
+    /** Conditional gate, renders fallback when falsy or empty like Show/For | 条件门禁，和 Show/For 一样在假值或空值时渲染 fallback */
     when?: unknown;
+    /** Content to show when condition is falsy | 条件为假时显示的内容 */
+    fallback?: ReactNode | (() => ReactNode);
     /** Content to show while loading | 加载中时显示的内容 */
     loading?: ReactNode | (() => ReactNode);
     /** Content to show when error occurs | 发生错误时显示的内容 */
@@ -78,6 +80,7 @@ function defaultIsEmpty<T>(data: T | undefined): boolean {
 export function QueryBoundary<T>({
     query,
     when = true,
+    fallback = null,
     loading = null,
     error = null,
     onError,
@@ -85,9 +88,9 @@ export function QueryBoundary<T>({
     children,
     isEmptyFn = defaultIsEmpty,
 }: QueryBoundaryProps<T>): ReactNode {
-    // when 未通过或 query 为 null/undefined 时不渲染任何内容
+    // when 未通过或 query 为 null/undefined 时渲染 fallback
     if (!shouldRenderCondition(when) || !query) {
-        return null;
+        return resolveNode(fallback);
     }
 
     const { data, error: queryError, isPending, isError, isEmpty: queryIsEmpty } = query;

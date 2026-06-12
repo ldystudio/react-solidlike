@@ -5,7 +5,7 @@ import { QueryBoundary } from "./QueryBoundary";
 
 describe("QueryBoundary 组件", () => {
     describe("when 条件控制", () => {
-        test("when 为 false 时不渲染任何内容", () => {
+        test("when 为 false 且未提供 fallback 时不渲染任何内容", () => {
             const query: QueryResult<string[]> = { data: ["a", "b"] };
             const html = renderToString(
                 <QueryBoundary query={query} when={false}>
@@ -15,34 +15,57 @@ describe("QueryBoundary 组件", () => {
             expect(html).toBe("");
         });
 
+        test("when 为 false 时渲染 fallback", () => {
+            const query: QueryResult<string[]> = { data: ["a", "b"] };
+            const html = renderToString(
+                <QueryBoundary query={query} when={false} fallback={<span>Not ready</span>} empty={<span>Empty</span>}>
+                    <span>content</span>
+                </QueryBoundary>
+            );
+            expect(html).toContain("Not ready");
+            expect(html).not.toContain("content");
+            expect(html).not.toContain("Empty");
+        });
+
+        test("fallback 支持函数", () => {
+            const query: QueryResult<string[]> = { data: ["a"] };
+            const html = renderToString(
+                <QueryBoundary query={query} when={false} fallback={() => <span>Blocked</span>}>
+                    <span>content</span>
+                </QueryBoundary>
+            );
+            expect(html).toContain("Blocked");
+        });
+
         test("when 为 true 时正常渲染", () => {
             const query: QueryResult<string[]> = { data: ["a"] };
             const html = renderToString(
-                <QueryBoundary query={query} when={true}>
+                <QueryBoundary query={query} when={true} fallback={<span>Not ready</span>}>
                     {(data) => <span>{data.join(",")}</span>}
                 </QueryBoundary>
             );
             expect(html).toContain("a");
+            expect(html).not.toContain("Not ready");
         });
 
-        test("when 为空对象时不渲染任何内容", () => {
+        test("when 为空对象时渲染 fallback", () => {
             const query: QueryResult<string[]> = { data: ["a"] };
             const html = renderToString(
-                <QueryBoundary query={query} when={{}}>
+                <QueryBoundary query={query} when={{}} fallback={<span>Not ready</span>}>
                     {(data) => <span>{data.join(",")}</span>}
                 </QueryBoundary>
             );
-            expect(html).toBe("");
+            expect(html).toContain("Not ready");
         });
 
-        test("when 为空 Map 时不渲染任何内容", () => {
+        test("when 为空 Map 时渲染 fallback", () => {
             const query: QueryResult<string[]> = { data: ["a"] };
             const html = renderToString(
-                <QueryBoundary query={query} when={new Map()}>
+                <QueryBoundary query={query} when={new Map()} fallback={<span>Not ready</span>}>
                     {(data) => <span>{data.join(",")}</span>}
                 </QueryBoundary>
             );
-            expect(html).toBe("");
+            expect(html).toContain("Not ready");
         });
 
         test("when 为非空对象时正常渲染", () => {
@@ -61,19 +84,25 @@ describe("QueryBoundary 组件", () => {
             expect(html).toContain("hello");
         });
 
-        test("when 为 false 时即使 isPending 也不渲染 loading", () => {
+        test("when 为 false 时即使 isPending 也优先渲染 fallback", () => {
             const query: QueryResult<string> = { isPending: true };
             const html = renderToString(
-                <QueryBoundary query={query} when={false} loading={<span>Loading</span>}>
+                <QueryBoundary
+                    query={query}
+                    when={false}
+                    fallback={<span>Not ready</span>}
+                    loading={<span>Loading</span>}
+                >
                     <span>content</span>
                 </QueryBoundary>
             );
-            expect(html).toBe("");
+            expect(html).toContain("Not ready");
+            expect(html).not.toContain("Loading");
         });
     });
 
     describe("query 为 null/undefined", () => {
-        test("query 为 null 时不渲染任何内容", () => {
+        test("query 为 null 且未提供 fallback 时不渲染任何内容", () => {
             const html = renderToString(
                 <QueryBoundary query={null}>
                     <span>content</span>
@@ -82,13 +111,33 @@ describe("QueryBoundary 组件", () => {
             expect(html).toBe("");
         });
 
-        test("query 为 undefined 时不渲染任何内容", () => {
+        test("query 为 null 时渲染 fallback", () => {
             const html = renderToString(
-                <QueryBoundary query={undefined}>
+                <QueryBoundary query={null} fallback={<span>Not ready</span>}>
                     <span>content</span>
                 </QueryBoundary>
             );
-            expect(html).toBe("");
+            expect(html).toContain("Not ready");
+            expect(html).not.toContain("content");
+        });
+
+        test("query 为 null 且 when 为 false 时渲染 fallback", () => {
+            const html = renderToString(
+                <QueryBoundary query={null} when={false} fallback={<span>Not ready</span>}>
+                    <span>content</span>
+                </QueryBoundary>
+            );
+            expect(html).toContain("Not ready");
+        });
+
+        test("query 为 undefined 时渲染 fallback", () => {
+            const html = renderToString(
+                <QueryBoundary query={undefined} fallback={<span>Not ready</span>}>
+                    <span>content</span>
+                </QueryBoundary>
+            );
+            expect(html).toContain("Not ready");
+            expect(html).not.toContain("content");
         });
     });
 

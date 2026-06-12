@@ -309,6 +309,8 @@ function UserList() {
 | Prop        | Type                                  | Description           |
 | ----------- | ------------------------------------- | --------------------- |
 | `query`     | `QueryResult<T>`                      | Query result object   |
+| `when`      | `unknown`                             | Conditional gate      |
+| `fallback`  | `ReactNode`                           | Content when `when` is falsy |
 | `loading`   | `ReactNode`                           | Loading state content |
 | `error`     | `ReactNode`                           | Error state content   |
 | `onError`   | `(error: unknown) => void`            | Error callback        |
@@ -403,7 +405,7 @@ import { Timeout } from "react-solidlike";
 | Prop        | Type                  | Description                                                                     |
 | ----------- | --------------------- | ------------------------------------------------------------------------------- |
 | `ms`        | `number`              | Delay time in milliseconds                                                      |
-| `mode`      | `'show' \| 'hide'`    | `'show'` = show after delay, `'hide'` = hide after delay; legacy aliases: `'after'` / `'before'` (default `'show'`) |
+| `mode`      | `'show' \| 'hide'`    | `'show'` = show after delay, `'hide'` = hide after delay (default `'show'`) |
 | `children`  | `ReactNode`           | Content to render                                                               |
 | `fallback`  | `ReactNode`           | Content to show while waiting (`show` mode only)                               |
 | `onTimeout` | `() => void`          | Callback when timeout occurs                                                    |

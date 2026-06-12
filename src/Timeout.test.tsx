@@ -276,41 +276,5 @@ describe("Timeout 组件", () => {
                 expect(onTimeout).not.toHaveBeenCalled();
             });
         });
-
-        describe("兼容旧 mode 别名", () => {
-            test("'after' 等同于 'show'", async () => {
-                render(
-                    <Timeout ms={100} mode="after" fallback={<span data-testid="fallback">Loading...</span>}>
-                        <span data-testid="content">Delayed Content</span>
-                    </Timeout>
-                );
-
-                expect(screen.getByTestId("fallback")).toBeTruthy();
-
-                await waitFor(
-                    () => {
-                        expect(screen.getByTestId("content")).toBeTruthy();
-                    },
-                    { timeout: 500 }
-                );
-            });
-
-            test("'before' 等同于 'hide'", async () => {
-                render(
-                    <Timeout ms={100} mode="before">
-                        <span data-testid="content">Temporary Content</span>
-                    </Timeout>
-                );
-
-                expect(screen.getByTestId("content")).toBeTruthy();
-
-                await waitFor(
-                    () => {
-                        expect(screen.queryByTestId("content")).toBeNull();
-                    },
-                    { timeout: 500 }
-                );
-            });
-        });
     });
 });

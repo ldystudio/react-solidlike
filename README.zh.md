@@ -309,6 +309,8 @@ function UserList() {
 | 属性        | 类型                                  | 描述         |
 | ----------- | ------------------------------------- | ------------ |
 | `query`     | `QueryResult<T>`                      | 查询结果对象 |
+| `when`      | `unknown`                             | 条件门禁     |
+| `fallback`  | `ReactNode`                           | `when` 为假时显示 |
 | `loading`   | `ReactNode`                           | 加载中显示   |
 | `error`     | `ReactNode`                           | 错误时显示   |
 | `onError`   | `(error: unknown) => void`            | 错误回调     |
@@ -403,7 +405,7 @@ import { Timeout } from "react-solidlike";
 | 属性        | 类型                  | 描述                                                            |
 | ----------- | --------------------- | --------------------------------------------------------------- |
 | `ms`        | `number`              | 延迟时间（毫秒）                                                |
-| `mode`      | `'show' \| 'hide'`    | `'show'` = 延迟后显示，`'hide'` = 延迟后隐藏；兼容旧别名 `'after'` / `'before'`，默认 `'show'` |
+| `mode`      | `'show' \| 'hide'`    | `'show'` = 延迟后显示，`'hide'` = 延迟后隐藏，默认 `'show'` |
 | `children`  | `ReactNode`           | 要渲染的内容                                                    |
 | `fallback`  | `ReactNode`           | 等待时显示的内容（仅 `show` 模式）                             |
 | `onTimeout` | `() => void`          | 超时发生时的回调                                                |
