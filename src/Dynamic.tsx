@@ -2,7 +2,7 @@ import { type ComponentProps, type ComponentType, createElement, type ElementTyp
 import { resolveNode } from "./utils";
 
 /** Get component props type | 获取组件的 props 类型 */
-type PropsOf<T extends ElementType> = ComponentProps<T>;
+type PropsOf<T extends ElementType> = T extends ElementType ? Omit<ComponentProps<T>, "component" | "fallback"> : never;
 
 export type DynamicProps<T extends ElementType> = {
     /** Component or element type to render | 要渲染的组件或元素类型 */
