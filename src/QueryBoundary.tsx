@@ -9,7 +9,7 @@ export interface QueryResult<T> {
     /** Error returned by query | 查询返回的错误 */
     error?: unknown;
     /** Whether loading is in progress | 是否正在加载中 */
-    isPending?: boolean;
+    isLoading?: boolean;
     /** Whether an error occurred | 是否发生错误 */
     isError?: boolean;
     /** Whether data is empty (optional, for custom empty logic) | 数据是否为空（可选，用于自定义空判断逻辑） */
@@ -93,10 +93,10 @@ export function QueryBoundary<T>({
         onShow,
         onFallback,
         children: () => {
-            const { data, error: queryError, isPending, isError, isEmpty: queryIsEmpty } = query as QueryResult<T>;
+            const { data, error: queryError, isLoading, isError, isEmpty: queryIsEmpty } = query as QueryResult<T>;
 
             // 加载中状态
-            if (isPending) {
+            if (isLoading) {
                 return resolveNode(loading);
             }
 

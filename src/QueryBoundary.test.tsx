@@ -84,8 +84,8 @@ describe("QueryBoundary 组件", () => {
             expect(html).toContain("hello");
         });
 
-        test("when 为 false 时即使 isPending 也优先渲染 fallback", () => {
-            const query: QueryResult<string> = { isPending: true };
+        test("when 为 false 时即使 isLoading 也优先渲染 fallback", () => {
+            const query: QueryResult<string> = { isLoading: true };
             const html = renderToString(
                 <QueryBoundary
                     query={query}
@@ -182,8 +182,8 @@ describe("QueryBoundary 组件", () => {
     });
 
     describe("加载状态", () => {
-        test("isPending 为 true 时渲染 loading", () => {
-            const query: QueryResult<string> = { isPending: true };
+        test("isLoading 为 true 时渲染 loading", () => {
+            const query: QueryResult<string> = { isLoading: true };
             const html = renderToString(
                 <QueryBoundary query={query} loading={<span>Loading...</span>}>
                     <span>content</span>
@@ -193,8 +193,8 @@ describe("QueryBoundary 组件", () => {
             expect(html).not.toContain("content");
         });
 
-        test("isPending 为 true 且未提供 loading 时渲染空内容", () => {
-            const query: QueryResult<string> = { isPending: true };
+        test("isLoading 为 true 且未提供 loading 时渲染空内容", () => {
+            const query: QueryResult<string> = { isLoading: true };
             const html = renderToString(
                 <QueryBoundary query={query}>
                     <span>content</span>
@@ -204,7 +204,7 @@ describe("QueryBoundary 组件", () => {
         });
 
         test("loading 可以是复杂组件", () => {
-            const query: QueryResult<string> = { isPending: true };
+            const query: QueryResult<string> = { isLoading: true };
             const html = renderToString(
                 <QueryBoundary
                     query={query}
@@ -419,9 +419,9 @@ describe("QueryBoundary 组件", () => {
     });
 
     describe("状态优先级", () => {
-        test("isPending 优先于 isError", () => {
+        test("isLoading 优先于 isError", () => {
             const query: QueryResult<string> = {
-                isPending: true,
+                isLoading: true,
                 isError: true,
             };
             const html = renderToString(
@@ -459,7 +459,7 @@ describe("QueryBoundary 组件", () => {
                     { id: 1, name: "Alice" },
                     { id: 2, name: "Bob" },
                 ],
-                isPending: false,
+                isLoading: false,
                 isError: false,
             };
             const html = renderToString(
