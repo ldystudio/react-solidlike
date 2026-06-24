@@ -315,7 +315,8 @@ function UserList() {
 | `error`     | `ReactNode`                           | 错误时显示   |
 | `onError`   | `(error: unknown) => void`            | 错误回调     |
 | `empty`     | `ReactNode`                           | 空数据显示   |
-| `children`  | `ReactNode \| (data: T) => ReactNode` | 成功时渲染   |
+| `select`    | `(data: T) => TSelected`              | 预处理成功数据 |
+| `children`  | `ReactNode \| (data: TSelected) => ReactNode` | 成功时渲染   |
 | `isEmptyFn` | `(data: T) => boolean`                | 自定义空判断 |
 
 ### `<Once>` - 单次渲染

@@ -416,6 +416,16 @@ describe("QueryBoundary 组件", () => {
             expect(html).toContain("Sum:");
             expect(html).toContain("6");
         });
+
+        test("select 在传给 children 前预处理数据", () => {
+            const query: QueryResult<{ items: string[] }> = { data: { items: ["a", "b"] } };
+            const html = renderToString(
+                <QueryBoundary query={query} select={(data) => data.items}>
+                    {(items) => <span>{items.join(",")}</span>}
+                </QueryBoundary>
+            );
+            expect(html).toContain("a,b");
+        });
     });
 
     describe("状态优先级", () => {

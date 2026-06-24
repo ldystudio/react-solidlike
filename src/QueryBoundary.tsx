@@ -16,7 +16,7 @@ export interface QueryResult<T> {
     isEmpty?: boolean;
 }
 
-export interface QueryBoundaryProps<T> extends Partial<Omit<ShowProps<unknown>, "children">> {
+export interface QueryBoundaryProps<T, TSelected = T> extends Partial<Omit<ShowProps<unknown>, "children">> {
     /** Query result object, usually from @tanstack/react-query's useQuery | 查询结果对象，通常来自 @tanstack/react-query 的 useQuery */
     query: QueryResult<T> | null | undefined;
     /** Content to show while loading | 加载中时显示的内容 */
@@ -28,9 +28,11 @@ export interface QueryBoundaryProps<T> extends Partial<Omit<ShowProps<unknown>, 
     /** Content to show when data is empty | 数据为空时显示的内容 */
     empty?: ReactNode | (() => ReactNode);
     /** Content to render on success, supports render props | 成功时渲染的内容，支持 render props 模式 */
-    children: ReactNode | ((data: T) => ReactNode);
+    children: ReactNode | ((data: TSelected) => ReactNode);
     /** Custom empty data check function, defaults to checking null/undefined or empty array | 自定义空数据判断函数，默认检查 data 是否为 null/undefined 或空数组 */
     isEmptyFn?: (data: T | undefined) => boolean;
+    /** Preprocess data before passing it to children | 传给 children 前预处理数据 */
+    select?: (data: T) => TSelected;
 }
 
 /** Default empty data check function | 默认的空数据判断函数 */
@@ -74,7 +76,7 @@ function defaultIsEmpty<T>(data: T | undefined): boolean {
  *   {(data) => <ItemList items={data.items} />}
  * </QueryBoundary>
  */
-export function QueryBoundary<T>({
+export function QueryBoundary<T, TSelected = T>({
     query,
     when = true,
     fallback = null,
@@ -86,7 +88,8 @@ export function QueryBoundary<T>({
     empty = null,
     children,
     isEmptyFn = defaultIsEmpty,
-}: QueryBoundaryProps<T>): ReactNode {
+    select,
+}: QueryBoundaryProps<T, TSelected>): ReactNode {
     return Show({
         when: shouldRenderCondition(when) && !!query,
         fallback,
@@ -114,7 +117,8 @@ export function QueryBoundary<T>({
 
             // 成功状态 - 支持 render props
             if (typeof children === "function") {
-                return children(data as T);
+                const selectedData = select ? select(data as T) : data;
+                return children(selectedData as TSelected);
             }
 
             return children;

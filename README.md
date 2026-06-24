@@ -315,7 +315,8 @@ function UserList() {
 | `error`     | `ReactNode`                           | Error state content   |
 | `onError`   | `(error: unknown) => void`            | Error callback        |
 | `empty`     | `ReactNode`                           | Empty state content   |
-| `children`  | `ReactNode \| (data: T) => ReactNode` | Success content       |
+| `select`    | `(data: T) => TSelected`              | Preprocess success data |
+| `children`  | `ReactNode \| (data: TSelected) => ReactNode` | Success content       |
 | `isEmptyFn` | `(data: T) => boolean`                | Custom empty check    |
 
 ### `<Once>` - Single Render
